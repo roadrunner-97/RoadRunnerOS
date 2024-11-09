@@ -16,7 +16,7 @@ elif [[ "$1" == "-grub" ]]; then
     cp build/rros.bin build/isodir/boot/rros.bin
     cp extras/grub.cfg build/isodir/boot/grub/grub.cfg
     grub-mkrescue -o build/rros.iso build/isodir
-    qemu-system-i386 -cdrom build/rros.iso
+    qemu-system-i386 -cdrom build/rros.iso -display gtk,zoom-to-fit=on
 
 else
     echo "please use either -grub or -bin options"

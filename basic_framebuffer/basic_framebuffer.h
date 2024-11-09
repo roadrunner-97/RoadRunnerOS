@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -38,8 +40,9 @@ _Static_assert(sizeof(text_element_t) == 2, "you fucked up buddy");
 size_t strlen(const char* str);
 void terminal_initialize(void);
 void terminal_draw_char(char c, color_t fg, color_t bg, size_t x, size_t y);
-void terminal_putchar(char c);
-void terminal_write(const char* data, size_t size);
+void terminal_putchar(char c, color_t fg, color_t bg);
+void terminal_write(const char* data, size_t size, color_t fg, color_t bg);
 void terminal_writestring(const char* data);
+void terminal_writestring_color(const char* data, color_t fg, color_t bg);
 void newline_handle();
 void render_int(const int num);
