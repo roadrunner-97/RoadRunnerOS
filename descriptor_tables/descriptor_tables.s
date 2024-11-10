@@ -15,6 +15,5 @@ _gdt_set_asm:
 
 .global _idt_set_asm
 .extern pws_idt
-_idt_set_asm:
-    lidt [pws_idt]
+_idt_set_asm:    lidt [pws_idt]
     ret

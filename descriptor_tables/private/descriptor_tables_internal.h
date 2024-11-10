@@ -17,6 +17,8 @@ typedef struct __attribute__((packed))
     uint8_t base_high;
 } gdt_entry_t;
 
+_Static_assert(sizeof(gdt_entry_t) == 8, "gdt_entry_t has grown?");
+
 typedef struct __attribute__((packed))
 {
     uint16_t base_low;
@@ -25,6 +27,8 @@ typedef struct __attribute__((packed))
     uint8_t flags;
     uint16_t base_high;
 } idt_entry_t;
+
+_Static_assert(sizeof(idt_entry_t) == 8, "idt_entry_t has grown?");
 
 extern void _gdt_set_asm(); /* defined in gdt.s */
 extern void _idt_set_asm();

@@ -1,0 +1,4 @@
+ata0-master: type=disk, path="build/rros.iso"
+boot: disk
+cpu: count=1, ips=1000000
+magic_break: enabled=1

@@ -1,5 +1,4 @@
 add_library(gdt descriptor_tables.s descriptor_tables.c)
-set(CMAKE_ASM_COMPILER /usr/bin/i686-elf-as)
-target_link_libraries(gdt gcc debugger rrstd)
+target_link_libraries(gdt gcc debugger rrstd interrupts)
 target_include_directories(gdt PUBLIC .)
 target_include_directories(gdt PRIVATE private)

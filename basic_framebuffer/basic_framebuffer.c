@@ -2,6 +2,9 @@
 #include "stdmem.h"
 #include "stdmaths.h"
 
+#define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
+
+
 
 size_t strlen(const char* str) 
 {
@@ -85,10 +88,10 @@ void terminal_write(const char* data, size_t size, color_t fg, color_t bg)
 	}
 }
 
-void render_int(int num)
+void render_int_color(int num, color_t fg, color_t bg)
 {
     if(num < 0){
-        terminal_putchar('-', fg_default, bg_default);
+        terminal_putchar('-', fg, bg);
         num *= -1;
     }
     int i = 1;
@@ -97,9 +100,14 @@ void render_int(int num)
     for(; i >= 0; i--)
     {
         int digit = num / power(10, i);
-        terminal_putchar('0' + digit, fg_default, bg_default);
+        terminal_putchar('0' + digit, fg, bg);
         num -= digit * power(10, i);
     }
+}
+
+void render_int(int num)
+{
+	render_int_color(num, fg_default, bg_default);
 }
 
 
