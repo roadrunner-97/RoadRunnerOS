@@ -5,6 +5,12 @@
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
+void timer_handler(regs_t* r)
+{
+	(void)r;
+	terminal_writestring("Kernel code handles PIT interrupt :)\n");
+}
+
 void kernel_main(void) 
 {
 	/* Initialize terminal interface */
@@ -12,6 +18,8 @@ void kernel_main(void)
 	terminal_writestring("Booted RoadrunnerOS 1.0 \"meep meep\"\n");
 	gdt_initialise();
 	idt_initialise();
+	irq_initialise();
+	install_irq_handler(0x00, timer_handler);
 	MAGIC_BREAK
 	kenable_interrupts();
 	for(int i = 3; i >= 0; i--){

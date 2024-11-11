@@ -3,6 +3,7 @@
 #include "debug.h"
 #include "interrupts.h"
 #include "stdmem.h"
+#include "stdhardware.h"
 
 
 gdt_entry_t gdts[3];
@@ -121,7 +122,62 @@ void idt_initialise()
 
     pws_idt.base = (uint32_t)&idts;
     pws_idt.len = (256 * sizeof(idt_entry_t)) - 1;
-    kdisable_interrupts();
     _idt_set_asm();
     kernel_info("IDT Loaded!\n");
+}
+
+extern void _irq0();
+extern void _irq1();
+extern void _irq2();
+extern void _irq3();
+extern void _irq4();
+extern void _irq5();
+extern void _irq6();
+extern void _irq7();
+extern void _irq8();
+extern void _irq9();
+extern void _irq10();
+extern void _irq11();
+extern void _irq12();
+extern void _irq13();
+extern void _irq14();
+extern void _irq15();
+
+
+void irq_initialise()
+{
+
+    /* shamelessly copied. this block reconfigures the PICs to use IRQs 32-47 instead of the default 0-15 */
+    write_byte_to_port(MASTER_PIC_ADDRESS, 0x11);
+    write_byte_to_port(SLAVE_PIC_ADDRESS, 0x11);
+
+    write_byte_to_port(MASTER_PIC_ADDRESS + 1, 0x20);
+    write_byte_to_port(SLAVE_PIC_ADDRESS + 1, 0x28);
+
+    write_byte_to_port(MASTER_PIC_ADDRESS + 1, 0x04);
+    write_byte_to_port(SLAVE_PIC_ADDRESS + 1, 0x02);
+
+    write_byte_to_port(MASTER_PIC_ADDRESS + 1, 0x01);
+    write_byte_to_port(SLAVE_PIC_ADDRESS + 1, 0x01);
+
+    write_byte_to_port(MASTER_PIC_ADDRESS + 1, 0x00);
+    write_byte_to_port(SLAVE_PIC_ADDRESS + 1, 0x00);
+
+    set_idt_entry(32, (uint32_t)_irq0, 0x08, 0x8E);
+    set_idt_entry(33, (uint32_t)_irq1, 0x08, 0x8E);
+    set_idt_entry(34, (uint32_t)_irq2, 0x08, 0x8E);
+    set_idt_entry(35, (uint32_t)_irq3, 0x08, 0x8E);
+    set_idt_entry(36, (uint32_t)_irq4, 0x08, 0x8E);
+    set_idt_entry(37, (uint32_t)_irq5, 0x08, 0x8E);
+    set_idt_entry(38, (uint32_t)_irq6, 0x08, 0x8E);
+    set_idt_entry(39, (uint32_t)_irq7, 0x08, 0x8E);
+    set_idt_entry(40, (uint32_t)_irq8, 0x08, 0x8E);
+    set_idt_entry(41, (uint32_t)_irq9, 0x08, 0x8E);
+    set_idt_entry(42, (uint32_t)_irq10, 0x08, 0x8E);
+    set_idt_entry(43, (uint32_t)_irq11, 0x08, 0x8E);
+    set_idt_entry(44, (uint32_t)_irq12, 0x08, 0x8E);
+    set_idt_entry(45, (uint32_t)_irq13, 0x08, 0x8E);
+    set_idt_entry(46, (uint32_t)_irq14, 0x08, 0x8E);
+    set_idt_entry(47, (uint32_t)_irq15, 0x08, 0x8E);
+    kernel_info("IRQs Loaded!\n");
 }
