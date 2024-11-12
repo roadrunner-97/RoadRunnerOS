@@ -47,3 +47,5 @@ void terminal_writestring_color(const char* data, color_t fg, color_t bg);
 void newline_handle();
 void render_int(const int num);
 void render_int_color(int num, color_t fg, color_t bg);
+void render_info_int(int num, color_t fg, color_t bg, int info_row);
+void terminal_info_writestring(const char* data, int info_row);

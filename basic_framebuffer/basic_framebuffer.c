@@ -16,6 +16,7 @@ size_t strlen(const char* str)
 
 static size_t terminal_row;
 static size_t terminal_column;
+
 static text_element_t* buffer;
 
 static color_t fg_default = VGA_COLOR_BLACK;
@@ -23,11 +24,19 @@ static color_t bg_default = VGA_COLOR_WHITE;
 
 void terminal_initialize(void) 
 {
-	terminal_row = 0;
+	terminal_row = 2;
 	terminal_column = 0;
 	buffer = (text_element_t*) 0xB8000;
 
-	for (size_t y = 0; y < VGA_HEIGHT; y++) {
+	for (size_t y = 0; y < 2; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			buffer[INDEX(x,y)].bg = fg_default;
+			buffer[INDEX(x,y)].fg = bg_default;
+			buffer[INDEX(x,y)].glyph = ' ';
+		}
+	}
+
+	for (size_t y = 2; y < VGA_HEIGHT; y++) {
 		for (size_t x = 0; x < VGA_WIDTH; x++) {
 			buffer[INDEX(x,y)].bg = bg_default;
 			buffer[INDEX(x,y)].fg = fg_default;
@@ -41,7 +50,7 @@ void newline_handle()
 	terminal_column = 0;
 	if(terminal_row >= VGA_HEIGHT - 1)
 	{
-		memcpy(&buffer[INDEX(0, 0)], &buffer[INDEX(0, 1)], sizeof(text_element_t) * VGA_WIDTH * (VGA_HEIGHT-1));
+		memcpy(&buffer[INDEX(0, 2)], &buffer[INDEX(0, 3)], sizeof(text_element_t) * VGA_WIDTH * (VGA_HEIGHT-1));
 		for(int x = 0; x < VGA_WIDTH; x++)
 		{
 			buffer[INDEX(x, (VGA_HEIGHT-1))].glyph = ' ';
@@ -60,6 +69,16 @@ void terminal_draw_char(char c, color_t fg, color_t bg, size_t x, size_t y)
 	buffer[INDEX(x,y)].glyph = c;
 }
 
+void terminal_info_putchar(char c, color_t fg, color_t bg, int info_column, int info_row)
+{
+	terminal_draw_char(c,
+					   fg,
+					   bg,
+					   info_column,
+					   info_row
+	);
+}
+
 void terminal_putchar(char c, color_t fg, color_t bg)
 {
 	terminal_draw_char(c,
@@ -70,6 +89,19 @@ void terminal_putchar(char c, color_t fg, color_t bg)
 
 	if (++terminal_column == VGA_WIDTH) {
         newline_handle();
+	}
+}
+
+void terminal_info_write(const char* data, size_t size, color_t fg, color_t bg, int info_row)
+{
+	for(size_t i = 0; i < size; i++)
+	{
+		if(data[i] == '\n')
+		{	
+			break;
+		} else {
+			terminal_info_putchar(data[i], fg, bg, i, info_row);
+		}
 	}
 }
 
@@ -86,6 +118,24 @@ void terminal_write(const char* data, size_t size, color_t fg, color_t bg)
 			terminal_putchar(data[i], fg, bg);
 		}
 	}
+}
+
+void render_info_int(int num, color_t fg, color_t bg, int info_row)
+{
+	int x = 0;
+    if(num < 0){
+        terminal_info_putchar('-', bg, fg, x++, info_row);
+        num *= -1;
+    }
+    int i = 1;
+    while(power(10, i) <= num){i++;}
+    i--;
+    for(; i >= 0; i--)
+    {
+        int digit = num / power(10, i);
+        terminal_info_putchar('0' + digit, bg, fg, x++, info_row);
+        num -= digit * power(10, i);
+    }
 }
 
 void render_int_color(int num, color_t fg, color_t bg)
@@ -110,7 +160,10 @@ void render_int(int num)
 	render_int_color(num, fg_default, bg_default);
 }
 
-
+void terminal_info_writestring(const char* data, int info_row)
+{
+	terminal_info_write(data, strlen(data), bg_default, fg_default, info_row);
+}
 
 void terminal_writestring(const char* data)
 {

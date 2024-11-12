@@ -7,15 +7,17 @@
 
 void timer_handler(regs_t* r)
 {
+	static uint64_t ticks = 0;
 	(void)r;
-	terminal_writestring("Kernel code handles PIT interrupt :)\n");
+	ticks++;
+	render_info_int(ticks, VGA_COLOR_BLACK, VGA_COLOR_WHITE, 1);
 }
 
 void kernel_main(void) 
 {
 	/* Initialize terminal interface */
 	terminal_initialize();
-	terminal_writestring("Booted RoadrunnerOS 1.0 \"meep meep\"\n");
+	terminal_info_writestring("Booted RoadrunnerOS 1.0 \"meep meep\"\n", 0);
 	gdt_initialise();
 	idt_initialise();
 	irq_initialise();
