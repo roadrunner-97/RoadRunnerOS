@@ -81,6 +81,18 @@ void terminal_info_putchar(char c, color_t fg, color_t bg, int info_column, int 
 
 void terminal_putchar(char c, color_t fg, color_t bg)
 {
+	if(c == '\n')
+	{
+		newline_handle();
+		return;
+	}
+
+	if(c == '\b')
+	{
+		buffer[INDEX(terminal_column, terminal_row)].glyph = ' ';
+		terminal_column--;
+		return;
+	}
 	terminal_draw_char(c,
 					   fg,
 					   bg,

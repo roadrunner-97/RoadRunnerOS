@@ -3,6 +3,7 @@
 #include "descriptor_tables.h"
 #include "interrupts.h"
 #include "soft_timer.h"
+#include "keyboard.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
@@ -15,13 +16,14 @@ void kernel_main(void)
 	idt_initialise();
 	irq_initialise();
 	initialise_timers();
+	initialise_keyboard();
 	MAGIC_BREAK
 	kenable_interrupts();
-	for(int i = 1; i <= 30; i++){
-		render_int(i);
-		terminal_writestring("\n");
-		spin_wait(3000);
-	}
-	terminal_writestring("\n did we survive?\n");
-	// for(;;);
+	// for(int i = 1; i <= 30; i++){
+	// 	render_int(i);
+	// 	terminal_writestring("\n");
+	// 	spin_wait(3000);
+	// }
+	// terminal_writestring("\n did we survive?\n");
+	for(;;);
 }

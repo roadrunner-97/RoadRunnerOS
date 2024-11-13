@@ -1,4 +1,5 @@
 #pragma once
+#include <stdint.h>
 /* This defines what the stack looks like after an ISR was running */
 typedef struct
 {
