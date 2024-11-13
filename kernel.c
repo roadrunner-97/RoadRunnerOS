@@ -2,16 +2,9 @@
 #include "debug.h"
 #include "descriptor_tables.h"
 #include "interrupts.h"
+#include "soft_timer.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
-
-void timer_handler(regs_t* r)
-{
-	static uint64_t ticks = 0;
-	(void)r;
-	ticks++;
-	render_info_int(ticks, VGA_COLOR_BLACK, VGA_COLOR_WHITE, 1);
-}
 
 void kernel_main(void) 
 {
@@ -21,16 +14,14 @@ void kernel_main(void)
 	gdt_initialise();
 	idt_initialise();
 	irq_initialise();
-	install_irq_handler(0x00, timer_handler);
+	initialise_timers();
 	MAGIC_BREAK
 	kenable_interrupts();
-	for(int i = 3; i >= 0; i--){
-		terminal_writestring("12 / ");
+	for(int i = 1; i <= 30; i++){
 		render_int(i);
-		terminal_writestring(" = ");
-		render_int(12/i);
 		terminal_writestring("\n");
+		spin_wait(3000);
 	}
 	terminal_writestring("\n did we survive?\n");
-	for(;;);
+	// for(;;);
 }
