@@ -104,9 +104,9 @@ void terminal_putchar(char c, color_t fg, color_t bg)
 	}
 }
 
-void terminal_info_write(const char* data, size_t size, color_t fg, color_t bg, int info_row)
+void terminal_info_write(const char* data, size_t size, color_t fg, color_t bg, int info_row, int info_start_column)
 {
-	for(size_t i = 0; i < size; i++)
+	for(size_t i = info_start_column; i < size; i++)
 	{
 		if(data[i] == '\n')
 		{	
@@ -132,9 +132,9 @@ void terminal_write(const char* data, size_t size, color_t fg, color_t bg)
 	}
 }
 
-void render_info_int(int num, color_t fg, color_t bg, int info_row)
+void render_info_int(int num, color_t fg, color_t bg, int info_row, int start_info_column)
 {
-	int x = 0;
+	int x = start_info_column;
     if(num < 0){
         terminal_info_putchar('-', bg, fg, x++, info_row);
         num *= -1;
@@ -172,9 +172,9 @@ void render_int(int num)
 	render_int_color(num, fg_default, bg_default);
 }
 
-void terminal_info_writestring(const char* data, int info_row)
+void terminal_info_writestring(const char* data, int info_row, int info_start_column)
 {
-	terminal_info_write(data, strlen(data), bg_default, fg_default, info_row);
+	terminal_info_write(data, strlen(data), bg_default, fg_default, info_row, info_start_column);
 }
 
 void terminal_writestring(const char* data)

@@ -1,3 +1,3 @@
 #pragma once
 
-#define KEYCODE_RELEASE_BIT (1 << 7)
+#define KEYCODE_RELEASE_BIT 0x80

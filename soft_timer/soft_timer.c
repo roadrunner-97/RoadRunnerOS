@@ -15,7 +15,7 @@ void hard_timer_handler(regs_t* r)
 	ticks++;
     if(ticks % 100 == 0)
     {
-        render_info_int(ticks/100, VGA_COLOR_BLACK, VGA_COLOR_WHITE, 1);
+        render_info_int(ticks/100, VGA_COLOR_BLACK, VGA_COLOR_WHITE, 1, 4);
     }
 }
 
