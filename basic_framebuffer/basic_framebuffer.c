@@ -89,8 +89,11 @@ void terminal_putchar(char c, color_t fg, color_t bg)
 
 	if(c == '\b')
 	{
+		if(terminal_column > 0)
+		{
+			terminal_column--;
 		buffer[INDEX(terminal_column, terminal_row)].glyph = ' ';
-		terminal_column--;
+		}
 		return;
 	}
 	terminal_draw_char(c,

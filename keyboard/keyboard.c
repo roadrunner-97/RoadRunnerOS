@@ -28,49 +28,8 @@ bool shift = false;
 bool ctrl = false;
 bool alt = false;
 
-void keyboard_handler(regs_t* r)
+void render_keystate()
 {
-    (void)r;
-    uint8_t keycode;
-
-    keycode = read_byte_from_port(0x60);
-
-    if(keycode & KEYCODE_RELEASE_BIT)
-    {
-        switch(keycode){
-            case 170:
-                shift = false;
-                break;
-            case 157:
-                ctrl = false;
-                break;
-            case 184:
-                alt = false;
-                break;
-            default:
-                break;
-        }
-    } else
-    {
-        switch(keycode){
-            case 42:
-                shift = true;
-                break;
-            case 29:
-                ctrl = true;
-                break;
-            case 56:
-                alt = true;
-                break;
-            default:
-                if(shift){
-                    terminal_putchar(kbd_en_us_upper[keycode], VGA_COLOR_BLACK, VGA_COLOR_WHITE);
-                } else {
-                    terminal_putchar(kbd_en_us_lower[keycode], VGA_COLOR_BLACK, VGA_COLOR_WHITE);
-                }
-                break;
-        }
-    }
     if(shift)
     {
         terminal_info_putchar('S', VGA_COLOR_WHITE, VGA_COLOR_RED, 0, 1);
@@ -93,7 +52,57 @@ void keyboard_handler(regs_t* r)
     }
 }
 
+void keyboard_handler(regs_t* r)
+{
+    (void)r;
+    uint8_t keycode;
+
+    keycode = read_byte_from_port(0x60);
+    render_int(keycode);
+    terminal_putchar('\n', VGA_COLOR_BLACK, VGA_COLOR_WHITE);
+    return;
+    if(keycode & KEYCODE_RELEASE_BIT)
+    {
+        switch(keycode){
+            case (KEYCODE_RELEASE_BIT | KEY_SHIFT):
+                shift = false;
+                break;
+            case (KEYCODE_RELEASE_BIT | KEY_CTRL):
+                ctrl = false;
+                break;
+            case (KEYCODE_RELEASE_BIT | KEY_ALT):
+                alt = false;
+                break;
+            default:
+                break;
+        }
+    } else
+    {
+        switch(keycode){
+            case KEY_SHIFT:
+                shift = true;
+                break;
+            case KEY_CTRL:
+                ctrl = true;
+                break;
+            case KEY_ALT:
+                alt = true;
+                break;
+            default:
+                if(shift){
+                    terminal_putchar(kbd_en_us_upper[keycode], VGA_COLOR_BLACK, VGA_COLOR_WHITE);
+                } else {
+                    terminal_putchar(kbd_en_us_lower[keycode], VGA_COLOR_BLACK, VGA_COLOR_WHITE);
+                }
+                break;
+        }
+    }
+    render_keystate();
+}
+
+
 void initialise_keyboard()
 {
     install_irq_handler(0x01, keyboard_handler);
+    render_keystate();
 }
