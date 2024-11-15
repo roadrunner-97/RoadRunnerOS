@@ -17,7 +17,6 @@ void kernel_main(void)
 	irq_initialise();
 	initialise_timers();
 	initialise_keyboard();
-	MAGIC_BREAK
 	kenable_interrupts();
 	// for(int i = 1; i <= 30; i++){
 	// 	render_int(i);

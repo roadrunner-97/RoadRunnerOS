@@ -1,6 +1,20 @@
 #pragma once
 #include <stdint.h>
+#include <stdbool.h>
+#include "stdbitfield.h"
 
+
+/* access byte defines */
+#define GDT_ENTRY_PRESENT_BIT_LOCATION 7
+#define RING_NUMBER_BIT_LOCATION       5
+#define RING_NUMBER_SIZE               FIELD_OF_ONES(2)
+#define DESCRIPTOR_TYPE_LOCATION       4
+#define TYPE_SIZE                      FIELD_OF_ONES(4)
+
+
+/* granularity byte defines */
+#define GRANULARITY_BIT_LOCATION       7
+#define OPERAND_SIZE_BIT_LOCATION      6
 
 struct ptr_with_size_t{
     uint16_t len;
