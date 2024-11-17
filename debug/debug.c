@@ -3,30 +3,30 @@
 
 void kernel_fatal_error(char* message)
 {
-    terminal_writestring_color(message, VGA_COLOR_WHITE, VGA_COLOR_RED);
+    terminal_writestring_color(message, COL_FG_ERROR, COL_BG_ERROR);
 }
 
 void kernel_fatal_error_int(int num)
 {
-    render_int_color(num, VGA_COLOR_WHITE, VGA_COLOR_RED);
+    render_int_color(num, COL_FG_ERROR, COL_BG_ERROR);
 }
 
 void kernel_warning(char* message)
 {
-    terminal_writestring_color(message, VGA_COLOR_WHITE, VGA_COLOR_BROWN);
+    terminal_writestring_color(message, COL_FG_WARNING, COL_BG_WARNING);
 }
 
 void kernel_warning_int(int num)
 {
-    render_int_color(num, VGA_COLOR_WHITE, VGA_COLOR_BROWN);
+    render_int_color(num, COL_FG_WARNING, COL_BG_WARNING);
 }
 
 void kernel_info(char* message)
 {
-    terminal_writestring_color(message, VGA_COLOR_WHITE, VGA_COLOR_BLUE);
+    terminal_writestring_color(message, COL_FG_INFO, COL_BG_INFO);
 }
 
 void kernel_info_int(int num)
 {
-    render_int_color(num, VGA_COLOR_WHITE, VGA_COLOR_BLUE);
+    render_int_color(num, COL_FG_INFO, COL_BG_INFO);
 }
