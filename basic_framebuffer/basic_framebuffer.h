@@ -37,6 +37,16 @@ _Static_assert(sizeof(text_element_t) == 2, "you fucked up buddy");
 
 #define INDEX(x, y) ((y) * VGA_WIDTH + (x))
 
+#define COL_BG_ERROR   VGA_COLOR_RED
+#define COL_FG_ERROR   VGA_COLOR_WHITE
+
+#define COL_BG_WARNING VGA_COLOR_BROWN
+#define COL_FG_WARNING VGA_COLOR_WHITE
+
+#define COL_BG_INFO    VGA_COLOR_BLUE
+#define COL_FG_INFO    VGA_COLOR_WHITE
+
+
 size_t strlen(const char* str);
 void terminal_initialize(void);
 void terminal_draw_char(char c, color_t fg, color_t bg, size_t x, size_t y);
@@ -46,7 +56,7 @@ void terminal_write(const char* data, size_t size, color_t fg, color_t bg);
 void terminal_writestring(const char* data);
 void terminal_writestring_color(const char* data, color_t fg, color_t bg);
 void newline_handle();
-void render_int(const int num);
-void render_int_color(int num, color_t fg, color_t bg);
 void render_info_int(int num, color_t fg, color_t bg, int info_row, int start_info_column);
 void terminal_info_writestring(const char* data, int info_row, int start_info_column);
+void kprintf_color(char* formatter, color_t fg, color_t bg, ...);
+void kprintf(char* formatter, ...);

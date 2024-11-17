@@ -1,9 +1,9 @@
 #include "descriptor_tables.h"
 #include "descriptor_tables_internal.h"
-#include "debug.h"
 #include "interrupts.h"
 #include "stdmem.h"
 #include "stdhardware.h"
+#include "basic_framebuffer.h"
 
 gdt_entry_t gdts[3];
 struct ptr_with_size_t pws_gdt;
@@ -49,7 +49,7 @@ void gdt_initialise()
     pws_gdt.len = (8 * 3) - 1;
     kdisable_interrupts();
     _gdt_set_asm();
-    kernel_info("GDT loaded\n");
+    kprintf_color("GDT Loaded\n", COL_FG_INFO, COL_BG_INFO);
 }
 
 extern void _isr0();
@@ -139,7 +139,7 @@ void idt_initialise()
     pws_idt.base = (uint32_t)&idts;
     pws_idt.len = (256 * sizeof(idt_entry_t)) - 1;
     _idt_set_asm();
-    kernel_info("IDT Loaded!\n");
+    kprintf_color("IDT Loaded\n", COL_FG_INFO, COL_BG_INFO);
 }
 
 extern void _irq0();
@@ -195,5 +195,5 @@ void irq_initialise()
     set_idt_entry(45, (uint32_t)_irq13, 0x08, 0x8E);
     set_idt_entry(46, (uint32_t)_irq14, 0x08, 0x8E);
     set_idt_entry(47, (uint32_t)_irq15, 0x08, 0x8E);
-    kernel_info("IRQs Loaded!\n");
+    kprintf_color("IRQs Loaded\n", COL_FG_INFO, COL_BG_INFO);
 }

@@ -1,6 +1,7 @@
 #include "basic_framebuffer.h"
 #include "stdmem.h"
 #include "stdmaths.h"
+#include "stdarg.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
@@ -122,14 +123,7 @@ void terminal_write(const char* data, size_t size, color_t fg, color_t bg)
 {
 	for (size_t i = 0; i < size; i++)
 	{
-		if(data[i] == '\n')
-		{
-            newline_handle();
-		}
-		else
-		{
-			terminal_putchar(data[i], fg, bg);
-		}
+		terminal_putchar(data[i], fg, bg);
 	}
 }
 
@@ -186,4 +180,69 @@ void terminal_writestring(const char* data)
 void terminal_writestring_color(const char* data, color_t fg, color_t bg)
 {
 	terminal_write(data, strlen(data), fg, bg);
+}
+
+void kprintf_color(char* formatter, color_t fg, color_t bg, ...)
+{
+	va_list p_args;
+	va_start(p_args, bg); /* the second param here is the last named arg in the list. */
+	size_t i = 0;
+	while(i < strlen(formatter)){
+		if(formatter[i] == '\0')
+		{
+			va_end(p_args);
+			return;
+		}
+
+		if(formatter[i] == '%')
+		{
+			if(formatter[i+1] == 'd')
+			{
+				render_int_color(va_arg(p_args, int), fg, bg);
+				i+=2;
+			} else if(formatter[i+1] == 'c') {
+				terminal_putchar((uint8_t)va_arg(p_args, int), fg, bg);
+				i+=2;
+			} else if(formatter[i+1] == 's') {
+				terminal_writestring_color(va_arg(p_args, char*), fg, bg);
+				i+=2;
+			}
+		} else {
+			terminal_putchar(formatter[i], fg, bg);
+			i++;
+		}
+	}
+}
+
+
+void kprintf(char* formatter, ...)
+{
+	va_list p_args;
+	va_start(p_args, formatter); /* the second param here is the last named arg in the list. */
+	size_t i = 0;
+	while(i < strlen(formatter)){
+		if(formatter[i] == '\0')
+		{
+			va_end(p_args);
+			return;
+		}
+
+		if(formatter[i] == '%')
+		{
+			if(formatter[i+1] == 'd')
+			{
+				render_int_color(va_arg(p_args, int), fg_default, bg_default);
+				i+=2;
+			} else if(formatter[i+1] == 'c') {
+				terminal_putchar((uint8_t)va_arg(p_args, int), fg_default, bg_default);
+				i+=2;
+			} else if(formatter[i+1] == 's') {
+				terminal_writestring_color(va_arg(p_args, char*), fg_default, bg_default);
+				i+=2;
+			}
+		} else {
+			terminal_putchar(formatter[i], fg_default, bg_default);
+			i++;
+		}
+	}
 }

@@ -1,7 +1,7 @@
-#include "debug.h"
 #include "interrupts_internal.h"
 #include "interrupts.h"
 #include "stdhardware.h"
+#include "basic_framebuffer.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
@@ -42,14 +42,6 @@ char* exception_friendly_names[] =
 void _fault_handler(regs_t *r)
 {
     (void)r;
-    // if(r->int_no == 0){
-    //     kernel_fatal_error("\nInterrupted with ISR");
-    //     kernel_fatal_error_int(r->int_no);
-    //     kernel_fatal_error(": ");
-    //     kernel_fatal_error(exception_friendly_names[r->int_no]);
-    //     kernel_fatal_error("\n");
-    // }
-    // for(;;);
 }
 
 irq_handler_t irq_handlers[16] = 
@@ -61,9 +53,7 @@ irq_handler_t irq_handlers[16] =
 void install_irq_handler(int irq_index, irq_handler_t irq_handler)
 {
     irq_handlers[irq_index] = irq_handler;
-    kernel_info("installed irq ");
-    kernel_info_int(irq_index);
-    kernel_info("!\n");
+    kprintf_color("installed irq %d!\n", COL_FG_INFO, COL_BG_INFO, irq_index);
 }
 
 void _irq_handler(regs_t *r)
@@ -74,9 +64,7 @@ void _irq_handler(regs_t *r)
     }
     else
     {
-        kernel_warning("unhandled IRQ ");
-        kernel_warning_int(r->int_no);
-        kernel_warning(" !!!!!\n");
+        kprintf("unhandled IRQ %d!!!\n", COL_FG_WARNING, COL_BG_WARNING, r->int_no);
     }
 
     if(r->int_no >= 40)
