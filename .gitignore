@@ -3,3 +3,4 @@ build/
 bx*.ini
 test.c
 a.out
+docs/
