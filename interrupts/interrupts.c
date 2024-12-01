@@ -53,7 +53,7 @@ irq_handler_t irq_handlers[16] =
 void install_irq_handler(int irq_index, irq_handler_t irq_handler)
 {
     irq_handlers[irq_index] = irq_handler;
-    kprintf_color("installed irq %d!\n", COL_FG_INFO, COL_BG_INFO, irq_index);
+    kprintf("%#installed irq %d!\n", COL_FG_INFO, COL_BG_INFO, irq_index);
 }
 
 void _irq_handler(regs_t *r)
@@ -64,7 +64,7 @@ void _irq_handler(regs_t *r)
     }
     else
     {
-        kprintf("unhandled IRQ %d!!!\n", COL_FG_WARNING, COL_BG_WARNING, r->int_no);
+        kprintf("%#unhandled IRQ %d!!!\n", COL_FG_WARNING, COL_BG_WARNING, r->int_no);
     }
 
     if(r->int_no >= 40)

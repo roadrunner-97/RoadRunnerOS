@@ -42,14 +42,14 @@ void set_gdt_entry(int index, uint32_t base, uint32_t limit, uint8_t access, uin
 void gdt_initialise()
 {
     set_gdt_entry(0, 0, 0,          0,    0);
-    set_gdt_entry(1, 0, 0xFFFFFFFF, generate_access_byte(true, 0, true, 10), generate_granularity_byte(true, true));
-    set_gdt_entry(2, 0, 0xFFFFFFFF, generate_access_byte(true, 0, true, 2), generate_granularity_byte(true, true));
+    set_gdt_entry(1, 0, 0x000FFFFF, generate_access_byte(true, 0, true, 10), generate_granularity_byte(true, true));
+    set_gdt_entry(2, 0, 0x000FFFFF, generate_access_byte(true, 0, true, 2), generate_granularity_byte(true, true));
 
     pws_gdt.base = (uint32_t) &gdts[0];
     pws_gdt.len = (8 * 3) - 1;
     kdisable_interrupts();
     _gdt_set_asm();
-    kprintf_color("GDT Loaded\n", COL_FG_INFO, COL_BG_INFO);
+    kprintf("%#GDT Loaded\n", COL_FG_INFO, COL_BG_INFO);
 }
 
 extern void _isr0();
@@ -139,7 +139,7 @@ void idt_initialise()
     pws_idt.base = (uint32_t)&idts;
     pws_idt.len = (256 * sizeof(idt_entry_t)) - 1;
     _idt_set_asm();
-    kprintf_color("IDT Loaded\n", COL_FG_INFO, COL_BG_INFO);
+    kprintf("%#IDT Loaded\n", COL_FG_INFO, COL_BG_INFO);
 }
 
 extern void _irq0();
@@ -195,5 +195,5 @@ void irq_initialise()
     set_idt_entry(45, (uint32_t)_irq13, 0x08, 0x8E);
     set_idt_entry(46, (uint32_t)_irq14, 0x08, 0x8E);
     set_idt_entry(47, (uint32_t)_irq15, 0x08, 0x8E);
-    kprintf_color("IRQs Loaded\n", COL_FG_INFO, COL_BG_INFO);
+    kprintf("%#IRQs Loaded\n", COL_FG_INFO, COL_BG_INFO);
 }

@@ -172,20 +172,17 @@ void terminal_info_writestring(const char* data, int info_row, int info_start_co
 	terminal_info_write(data, strlen(data), bg_default, fg_default, info_row, info_start_column);
 }
 
-void terminal_writestring(const char* data)
-{
-	terminal_write(data, strlen(data), fg_default, bg_default);
-}
-
 void terminal_writestring_color(const char* data, color_t fg, color_t bg)
 {
 	terminal_write(data, strlen(data), fg, bg);
 }
 
-void kprintf_color(char* formatter, color_t fg, color_t bg, ...)
+void kprintf(char* formatter, ...)
 {
+	color_t fg = VGA_COLOR_BLACK;
+	color_t bg = VGA_COLOR_WHITE;
 	va_list p_args;
-	va_start(p_args, bg); /* the second param here is the last named arg in the list. */
+	va_start(p_args, formatter); /* the first param here is the last named arg in the list. */
 	size_t i = 0;
 	while(i < strlen(formatter)){
 		if(formatter[i] == '\0')
@@ -206,42 +203,14 @@ void kprintf_color(char* formatter, color_t fg, color_t bg, ...)
 			} else if(formatter[i+1] == 's') {
 				terminal_writestring_color(va_arg(p_args, char*), fg, bg);
 				i+=2;
+			} else if(formatter[i+1] == '#') {
+				fg = va_arg(p_args, color_t);
+				bg = va_arg(p_args, color_t);
+				i+=2;
+
 			}
 		} else {
 			terminal_putchar(formatter[i], fg, bg);
-			i++;
-		}
-	}
-}
-
-
-void kprintf(char* formatter, ...)
-{
-	va_list p_args;
-	va_start(p_args, formatter); /* the second param here is the last named arg in the list. */
-	size_t i = 0;
-	while(i < strlen(formatter)){
-		if(formatter[i] == '\0')
-		{
-			va_end(p_args);
-			return;
-		}
-
-		if(formatter[i] == '%')
-		{
-			if(formatter[i+1] == 'd')
-			{
-				render_int_color(va_arg(p_args, int), fg_default, bg_default);
-				i+=2;
-			} else if(formatter[i+1] == 'c') {
-				terminal_putchar((uint8_t)va_arg(p_args, int), fg_default, bg_default);
-				i+=2;
-			} else if(formatter[i+1] == 's') {
-				terminal_writestring_color(va_arg(p_args, char*), fg_default, bg_default);
-				i+=2;
-			}
-		} else {
-			terminal_putchar(formatter[i], fg_default, bg_default);
 			i++;
 		}
 	}
