@@ -8,7 +8,7 @@ set(CMAKE_ASM_COMPILER /usr/bin/i686-elf-as)
 set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/extras/linker.ld")
 
 add_subdirectory(bootcode)
-add_subdirectory(stdlib)
+add_subdirectory(kstd)
 add_subdirectory(basic_framebuffer)
 add_subdirectory(descriptor_tables)
 add_subdirectory(interrupts)
