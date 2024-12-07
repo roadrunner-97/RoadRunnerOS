@@ -53,6 +53,8 @@ void newline_handle()
 		for(int x = 0; x < VGA_WIDTH; x++)
 		{
 			buffer[INDEX(x, (VGA_HEIGHT-1))].glyph = ' ';
+			buffer[INDEX(x, (VGA_HEIGHT-1))].bg = bg_default;
+			buffer[INDEX(x, (VGA_HEIGHT-1))].fg = fg_default;
 		}
 	}
 	else
