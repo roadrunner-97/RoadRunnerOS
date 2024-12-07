@@ -195,9 +195,10 @@ void kprintf(char* formatter, ...)
 		{
 			if(formatter[i+1] == 'd')
 			{
-				render_int_color(va_arg(p_args, int), fg, bg);
+				render_int_color(va_arg(p_args, uint32_t), fg, bg);
 				i+=2;
-			} else if(formatter[i+1] == 'c') {
+			}
+			else if(formatter[i+1] == 'c') {
 				terminal_putchar((uint8_t)va_arg(p_args, int), fg, bg);
 				i+=2;
 			} else if(formatter[i+1] == 's') {

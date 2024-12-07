@@ -6,6 +6,10 @@
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
+extern void* _kernel_start;
+extern void* _kernel_end;
+extern void* _kernel_size;
+
 void kernel_main(void) 
 {
 	/* Initialize terminal interface */
@@ -17,6 +21,6 @@ void kernel_main(void)
 	initialise_timers();
 	initialise_keyboard();
 	kenable_interrupts();
-	kprintf("Hello world, I am %s, and I am %d years old \n", "Raffi", 27);
+	kprintf("start: %d, end: %d, size: %d\n", &_kernel_start, &_kernel_end, &_kernel_size);
 	for(;;);
 }
