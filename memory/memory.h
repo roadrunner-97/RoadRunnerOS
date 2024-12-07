@@ -28,19 +28,19 @@ uint32_t align_to(uint32_t base, uint32_t align);
  * @param start a pointer to the beginning of the available memory for the heap.
  * @param len the size of the heap, in bytes.
  */
-void memory_space_assign(void* start, uint32_t len);
+void kmemory_space_assign(void* start, uint32_t len);
 
 /**
  * @brief assign a region of memory to the callee.
  * @param size the requested minimum length of memory to be allocated.
  * @return the pointer to the requested memory, else null to indicate the memory couldn't be allocated.
  */
-void* memory_assign_chunk(uint32_t size);
+void* kmemory_assign_chunk(uint32_t size);
 
 /**
  * @brief free a given block of memory that was previously requested via malloc.
  * @param the location of memory to be freed.
  * @return the size of the freed block. should always be at least the size of the allocated block, or 0 if an error
  */
-uint32_t memory_free_chunk(void* loc);
+uint32_t kmemory_free_chunk(void* loc);
 
