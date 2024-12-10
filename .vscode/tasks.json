@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build bin-file",
+            "type": "shell",
+            "command" : "./generate.sh -bin",
+            "group": "build",
+            "isBackground": true,
+            "problemMatcher": [{
+                "pattern": [{
+                  "regexp": ".",
+                  "file": 1,"line": 1,
+                  "column": 1,"message": 1
+                }],
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": { "regexp": "." },
+                    "endsPattern": { "regexp": "." }
+                },
+              }],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+    ]
+}

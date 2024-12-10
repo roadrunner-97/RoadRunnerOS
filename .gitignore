@@ -1,5 +1,4 @@
 build/
-.vscode/
 bx*.ini
 test.c
 a.out
