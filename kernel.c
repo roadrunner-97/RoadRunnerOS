@@ -4,6 +4,8 @@
 #include "soft_timer.h"
 #include "keyboard.h"
 #include "memory.h"
+#include "pages.h"
+#include "stdmem.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
@@ -22,17 +24,15 @@ void kernel_main(void)
 	initialise_timers();
 	initialise_keyboard();
 	kenable_interrupts();
-	uint32_t aligned_start = align_to((uint32_t)&_kernel_end, 1024);
+	uint32_t aligned_start = align_to((uint32_t)&_kernel_end, 4096);
 	kmemory_space_assign((void*)aligned_start, 50000);
-	void* p1 = kmemory_assign_chunk(100);
-	void* p2 = kmemory_assign_chunk(100);
-	void* p3 = kmemory_assign_chunk(100);
-	void* p4 = kmemory_assign_chunk(100);
-
-	kmemory_free_chunk(p2);
-	kmemory_free_chunk(p3);
-	void* p5 = kmemory_assign_chunk(200);
-
-	kprintf("1-5: %d, %d, %d, %d, %d\n", p1, p2, p3, p4, p5);
+	create_page_directory();
+	create_page_table(0);
+	uint32_t* page = add_page_table_entry(0, 0);
+	for(int i = 0; i < 1024; i++)
+	{
+		page[i] = i;
+	}
+	/* enable MMU here */
 	for(;;);
 }
