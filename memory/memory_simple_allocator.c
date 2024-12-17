@@ -31,7 +31,7 @@ void kmemory_space_assign(void* start, uint32_t len)
     block_prefix_t* first_block = (block_prefix_t*)mem_space_begin;
     first_block->is_block_free = FREE;
     first_block->block_length = mem_space_size - PREFIX_SIZE;
-    kprintf("%#allocated a heap of size %d from %d to %d\n", COL_BG_INFO, COL_FG_INFO, (int)mem_space_size, (int)mem_space_begin, (int)mem_space_end);
+    kprintf("Memory: %#allocated a heap of size %d from %d to %d\n", COL_BG_INFO, COL_FG_INFO, (int)mem_space_size, (int)mem_space_begin, (int)mem_space_end);
 }
 
 static block_prefix_t* get_next_block_prefix(block_prefix_t* current_block)
@@ -82,6 +82,8 @@ void* kmemory_assign_page_aligned_chunk(uint32_t size_request)
             }
         }
     }
+    kprintf("page-aligned malloc failed!!!\n");
+    for(;;);
     return 0;
 }
 

@@ -3,3 +3,4 @@ bx*.ini
 test.c
 a.out
 docs/
+.vscode/settings.json

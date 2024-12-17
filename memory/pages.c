@@ -82,8 +82,8 @@ void identity_map(page_directory_entry_t* directory, void* start_address, void* 
     }
 }
 
-
 void enable_paging()
 {
     _enable_paging();
+    kprintf("Memory: %#enabled paging and didn't blow up!!!!!!\n", COL_BG_INFO, COL_FG_INFO);
 }
