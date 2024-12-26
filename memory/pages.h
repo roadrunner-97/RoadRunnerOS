@@ -40,6 +40,11 @@ typedef struct __attribute__((packed))
 _Static_assert(sizeof(page_directory_entry_t) == 4, "page directory entry size is wrong :(");
 
 /**
+ * @brief register a function to be called when the processor gets a page fault exception.
+ */
+void initialise_pagefault_handler();
+
+/**
  * @brief create a new empty page directory.
  * this function creates a 4kB block of page_directory_entry_t elements at 1024 * 4B elements.
  * they are guaranteed to be all have present=false, but no other setting is done. 
@@ -81,8 +86,3 @@ void map_virtual_page_to_physical_page(page_directory_entry_t* directory, void* 
  * If you don't do this, you'll get a double-fault exception.
  */
 void identity_map(page_directory_entry_t* directory, void* start_address, void* end_address);
-
-/**
- * @brief enable paging and set the CR3 register to point to the value in @var page_directory
- */
-void enable_paging();

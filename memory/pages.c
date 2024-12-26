@@ -2,12 +2,26 @@
 #include "memory.h"
 #include "basic_framebuffer.h"
 #include "memory_internal.h"
+#include "interrupts.h"
 
 page_directory_entry_t* page_directory;
 
 void set_active_page_directory(page_directory_entry_t* active_directory)
 {
     page_directory = active_directory;
+    _enable_paging();
+    kprintf("Memory: %#enabled paging and didn't blow up!!!!!!\n", COL_BG_INFO, COL_FG_INFO);
+}
+
+void handle_page_fault_interrupt()
+{
+    kprintf("page fault!!!!!\n");
+}
+
+void initialise_pagefault_handler()
+{
+    kprintf("registering page fault handler interrupt\n");
+    install_irq_handler(13, handle_page_fault_interrupt);
 }
 
 int get_page_directory_offset(void* address)
@@ -80,10 +94,4 @@ void identity_map(page_directory_entry_t* directory, void* start_address, void* 
     {
         map_virtual_page_to_physical_page(directory, p_page, p_page);
     }
-}
-
-void enable_paging()
-{
-    _enable_paging();
-    kprintf("Memory: %#enabled paging and didn't blow up!!!!!!\n", COL_BG_INFO, COL_FG_INFO);
 }
