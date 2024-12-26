@@ -25,7 +25,7 @@ void kernel_main(void)
 	kenable_interrupts();
 
 	uint32_t aligned_start = (uint32_t)round_up_to_page_address(&_kernel_end);
-	kmemory_space_assign((void*)aligned_start, 100000000);
+	kmemory_space_assign((void*)aligned_start, 0x8000000);
 
 	page_directory_entry_t* system_directory = create_page_directory();
 

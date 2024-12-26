@@ -58,9 +58,6 @@ void keyboard_handler(regs_t* r)
     uint8_t keycode;
 
     keycode = read_byte_from_port(0x60);
-    // render_int(keycode);
-    // terminal_putchar('\n', VGA_COLOR_BLACK, VGA_COLOR_WHITE);
-    // return;
     if(keycode & KEYCODE_RELEASE_BIT)
     {
         switch(keycode){

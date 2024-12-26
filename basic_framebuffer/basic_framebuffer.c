@@ -164,9 +164,47 @@ void render_int_color(int num, color_t fg, color_t bg)
     }
 }
 
-void render_int(int num)
+void render_hex_colour(int num, color_t fg, color_t bg)
 {
-	render_int_color(num, fg_default, bg_default);
+	if(num < 0)
+	{
+		terminal_putchar('-', fg, bg);
+		num *= -1;
+	}
+	terminal_putchar('0', fg, bg);
+	terminal_putchar('x', fg, bg);
+
+	int i = 1;
+	while(power(16, i) <= num){i++;}
+	i--;
+	for(; i>= 0; i--)
+	{
+		int digit = num / power(16, i);
+		switch(digit)
+		{
+			case 10:
+				terminal_putchar('A', fg, bg);
+				break;
+			case 11:
+				terminal_putchar('B', fg, bg);
+				break;
+			case 12:
+				terminal_putchar('C', fg, bg);
+				break;
+			case 13:
+				terminal_putchar('D', fg, bg);
+				break;
+			case 14:
+				terminal_putchar('E', fg, bg);
+				break;
+			case 15:
+				terminal_putchar('F', fg, bg);
+				break;
+			default:
+				terminal_putchar('0' + digit, fg, bg);
+		}
+		num -= digit * power(16, i);
+	}
 }
 
 void terminal_info_writestring(const char* data, int info_row, int info_start_column)
@@ -198,6 +236,10 @@ void kprintf(char* formatter, ...)
 			if(formatter[i+1] == 'd')
 			{
 				render_int_color(va_arg(p_args, uint32_t), fg, bg);
+				i+=2;
+			}
+			else if(formatter[i+1] == 'h') {
+				render_hex_colour(va_arg(p_args, uint32_t), fg, bg);
 				i+=2;
 			}
 			else if(formatter[i+1] == 'c') {
