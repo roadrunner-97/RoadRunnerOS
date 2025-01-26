@@ -43,7 +43,7 @@ void set_channel_zero_config(int ticks_per_second)
 void spin_wait(int ms)
 {
     uint64_t beginning = ticks;
-    while((ticks - beginning)*10 < (uint64_t)ms){}
+    while((ticks - beginning)*10 < (uint64_t)ms){_yield();}
 }
 
 void initialise_timers()

@@ -1,0 +1,90 @@
+#include "linked_list.h"
+#include "memory.h"
+#include "basic_framebuffer.h"
+
+void linked_list_init(linked_t* list)
+{
+    list->first = (linked_node_t*)0;
+    list->count = 0;
+}
+
+linked_node_t* linked_list_get_leaf(linked_t* list)
+{
+    if(!list->first)
+    {
+        kprintf("tried to call get-leaf on empty list\n");
+        return (linked_node_t*)0;
+    }
+
+    linked_node_t* current = list->first;
+    int index = 1;
+
+    while(!(current->next))
+    {
+        current = current->next;
+        index++;
+    }
+    return current;
+}
+
+void linked_list_append(linked_t* list, void* payload)
+{
+    linked_node_t* new_node = kmemory_assign_chunk(sizeof(linked_node_t));
+    new_node->payload = payload;
+    new_node->next = (linked_node_t*)0;
+    if(!list->first)
+    {
+        list->first = new_node;
+        kprintf("first node is empty, so we populate it here\n");
+    } else {
+        linked_node_t* leaf_node = list->first;
+        while(leaf_node->next)
+        {
+            leaf_node = leaf_node->next;
+        }
+        leaf_node->next = new_node;
+    }
+    list->count++;
+}
+
+int linked_list_get_size(linked_t* list)
+{
+    return list->count;
+}
+
+void linked_list_dump(linked_t* list)
+{
+    if(list->count == 0 || !list->first)
+    {
+        kprintf("list is empty!\n");
+        return;
+    }
+
+    linked_node_t* current = list->first;
+    int idx = 1;
+
+    while((current->next))
+    {
+        kprintf("element %d at location %h points to %h\n", idx++, current, current->next);
+        current = current->next;
+    }
+    kprintf("leaf node %d at location %h\n", idx, current);
+}
+
+void* find_node_by_payload(linked_t* list, bool(*filter_function)(void*))
+{
+    if(!list->first)
+    {
+        return (void*)0;
+    }
+    linked_node_t* current = list->first;
+    while(current->next)
+    {
+        if(filter_function(current->payload))
+        {
+            return current->payload;
+        }
+        current = current->next;
+    }
+    return (void*)0;
+}

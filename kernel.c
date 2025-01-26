@@ -7,6 +7,7 @@
 #include "pages.h"
 #include "stdmem.h"
 #include "processes.h"
+#include "linked_list.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
@@ -19,7 +20,7 @@ void magic_loop1()
 	while(true)
 	{
 		kprintf("task 1 says hello! %d\n", i++);
-		spin_wait(100);
+		spin_wait(2000);
 	}
 }
 
@@ -29,7 +30,7 @@ void magic_loop2()
 	while(true)
 	{
 		kprintf("task 2 says hello! %d\n", i++);
-		spin_wait(100);
+		spin_wait(500);
 	}
 }
 
@@ -55,9 +56,16 @@ void kernel_main(void)
 
 	// /* enable MMU here */
 	// set_active_page_directory(system_directory);
-	multiprocessing_init();
-	create_process("task2", magic_loop2);
-	magic_loop1();
+	// multiprocessing_init();
+	// create_process("task2", magic_loop2);
+	// magic_loop1();
 
+	linked_t* blah = (linked_t*)kmemory_assign_chunk(sizeof(linked_t));
+	linked_list_init(blah);
+	linked_list_append(blah, (void*)0);
+	linked_list_append(blah, (void*)0);
+	linked_list_append(blah, (void*)0);
+	linked_list_append(blah, (void*)0);
+	linked_list_dump(blah);
 	for(;;);
 }
