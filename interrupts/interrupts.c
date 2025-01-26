@@ -56,8 +56,19 @@ void install_irq_handler(int irq_index, irq_handler_t irq_handler)
     kprintf("%#installed irq %d!\n", COL_FG_INFO, COL_BG_INFO, irq_index);
 }
 
+void ack_PIT()
+{
+    write_byte_to_port(SLAVE_PIC_ADDRESS, 0x20);
+}
+
 void _irq_handler(regs_t *r)
 {
+    if(r->int_no >= 40)
+    {
+        write_byte_to_port(SLAVE_PIC_ADDRESS, 0x20);
+    }
+    write_byte_to_port(MASTER_PIC_ADDRESS, 0x20);
+
     if(irq_handlers[r->int_no - 32])
     {
         irq_handlers[r->int_no - 32](r);
@@ -66,11 +77,5 @@ void _irq_handler(regs_t *r)
     {
         kprintf("%#unhandled IRQ %d!!!\n", COL_FG_WARNING, COL_BG_WARNING, r->int_no);
     }
-
-    if(r->int_no >= 40)
-    {
-        write_byte_to_port(SLAVE_PIC_ADDRESS, 0x20);
-    }
-    write_byte_to_port(MASTER_PIC_ADDRESS, 0x20);
 }
 

@@ -6,11 +6,33 @@
 #include "memory.h"
 #include "pages.h"
 #include "stdmem.h"
+#include "processes.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
 extern void* _kernel_start;
 extern void* _kernel_end;
+
+void magic_loop1()
+{
+	int i = 0;
+	while(true)
+	{
+		kprintf("task 1 says hello! %d\n", i++);
+		spin_wait(100);
+	}
+}
+
+void magic_loop2()
+{
+	int i = 0;
+	while(true)
+	{
+		kprintf("task 2 says hello! %d\n", i++);
+		spin_wait(100);
+	}
+}
+
 
 void kernel_main(void) 
 {
@@ -25,24 +47,17 @@ void kernel_main(void)
 	kenable_interrupts();
 
 	uint32_t aligned_start = (uint32_t)round_up_to_page_address(&_kernel_end);
-	kmemory_space_assign((void*)aligned_start, 0x8000000);
+	kmemory_space_assign((void*)aligned_start, 0x100000);
 
 	page_directory_entry_t* system_directory = create_page_directory();
 
 	identity_map(system_directory, 0, &_kernel_end);
 
-	// uint32_t* little_address = (uint32_t*)0x500000;
-
-	// map_virtual_page_to_physical_page(system_directory, (void*)little_address, (void*)big_address);
 	// /* enable MMU here */
-	set_active_page_directory(system_directory);
-
-	// kprintf("number is: %d\n", *little_address);
-	// for(int i = 3; i >=0; i--)
-	// {
-	// 	kprintf("12 / %d = %d\n", i, 12/i);
-	// }
-
+	// set_active_page_directory(system_directory);
+	multiprocessing_init();
+	create_process("task2", magic_loop2);
+	magic_loop1();
 
 	for(;;);
 }

@@ -2,6 +2,7 @@
 #include "basic_framebuffer.h"
 #include "interrupts.h"
 #include "stdhardware.h"
+#include "processes.h"
 
 #include "soft_timer_internal.h"
 
@@ -16,6 +17,10 @@ void hard_timer_handler(regs_t* r)
     if(ticks % 100 == 0)
     {
         render_info_int(ticks/100, VGA_COLOR_BLACK, VGA_COLOR_WHITE, 1, 4);
+        if(get_process_count())
+        {
+            switch_process();
+        }
     }
 }
 
