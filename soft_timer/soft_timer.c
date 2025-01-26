@@ -10,13 +10,24 @@
 
 uint64_t ticks;
 
+void clock_process()
+{
+    while(true)
+    {
+        if(ticks % 100 == 0)
+        {
+            render_info_int(ticks/100, VGA_COLOR_BLACK, VGA_COLOR_WHITE, 1, 4);
+        }
+        _yield();
+    }
+}
+
 void hard_timer_handler(regs_t* r)
 {
 	(void)r;
 	ticks++;
-    if(ticks % 100 == 0)
+    if(ticks % 20 == 0)
     {
-        render_info_int(ticks/100, VGA_COLOR_BLACK, VGA_COLOR_WHITE, 1, 4);
         if(get_process_count())
         {
             switch_process();
@@ -51,4 +62,5 @@ void initialise_timers()
     ticks = 0;
     set_channel_zero_config(100);
     install_irq_handler(0x00, hard_timer_handler);
+    create_process("clock process", clock_process);
 }

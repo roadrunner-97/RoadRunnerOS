@@ -40,7 +40,7 @@ void magic_loop3()
 	while(true)
 	{
 		kprintf("task 3 says hello! %d\n", i++);
-		spin_wait(100);
+		spin_wait(800);
 	}
 }
 
@@ -53,12 +53,10 @@ void kernel_main(void)
 	gdt_initialise();
 	idt_initialise();
 	irq_initialise();
-	initialise_timers();
-	initialise_keyboard();
-	kenable_interrupts();
 
 	uint32_t aligned_start = (uint32_t)round_up_to_page_address(&_kernel_end);
 	kmemory_space_assign((void*)aligned_start, 0x100000);
+	multiprocessing_init(); /* we want to do this pretty quick to allow other stuff to spin up processes */
 
 	page_directory_entry_t* system_directory = create_page_directory();
 
@@ -66,10 +64,13 @@ void kernel_main(void)
 
 	/* enable MMU here */
 	// set_active_page_directory(system_directory);
-	multiprocessing_init();
 	create_process("task2", magic_loop2);
 	create_process("task3", magic_loop3);
-	magic_loop1();
 
+	initialise_timers();
+	initialise_keyboard();
+	kenable_interrupts(); /* this is what starts the preemption thingy and ultimately gives us processes*/
+
+	magic_loop1();
 	for(;;);
 }
