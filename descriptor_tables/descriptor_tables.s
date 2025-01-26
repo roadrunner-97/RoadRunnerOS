@@ -1,4 +1,6 @@
 .intel_syntax noprefix
+.code32
+
 .global _gdt_set_asm /* function will exist in C land as gdt_flush i think */
 .extern pws_gdt /* this is the pointer with size */
 _gdt_set_asm:

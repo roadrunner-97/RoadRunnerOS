@@ -1,5 +1,6 @@
 .intel_syntax noprefix
 .align 32
+.code32
 
 .global _get_eip
 _get_eip:

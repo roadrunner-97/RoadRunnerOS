@@ -1,5 +1,7 @@
 .intel_syntax noprefix
 .global _enable_paging
+.code32
+
 .extern page_directory
 
 _enable_paging:

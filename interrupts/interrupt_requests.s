@@ -1,5 +1,6 @@
 .intel_syntax noprefix
 .align 32
+.code32
 
 .global _irq0
 .global _irq1

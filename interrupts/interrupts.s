@@ -1,5 +1,5 @@
 .intel_syntax noprefix
-.align 32
+.code32
 
 .global _isr0
 .global _isr1
