@@ -22,6 +22,6 @@ just for fun
 - [x] physical memory allocator
 - [x] address virtualisation
 - [ ] vga mode
-- [ ] multi-tasking
+- [x] multi-tasking (not supported alongside virtual memory (yet))
 - [ ] long mode
 - [ ] syscalls
