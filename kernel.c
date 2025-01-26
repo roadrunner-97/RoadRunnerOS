@@ -30,7 +30,7 @@ void magic_loop2()
 	while(true)
 	{
 		kprintf("task 2 says hello! %d\n", i++);
-		spin_wait(500);
+		spin_wait(5000);
 	}
 }
 
@@ -40,7 +40,17 @@ void magic_loop3()
 	while(true)
 	{
 		kprintf("task 3 says hello! %d\n", i++);
-		spin_wait(800);
+		spin_wait(3000);
+	}
+}
+
+void task_display()
+{
+	while(true)
+	{
+		kprintf("dumping current processes\n");
+		dump_processes();
+		spin_wait(2000);
 	}
 }
 
@@ -66,6 +76,7 @@ void kernel_main(void)
 	// set_active_page_directory(system_directory);
 	create_process("task2", magic_loop2);
 	create_process("task3", magic_loop3);
+	create_process("top", task_display);
 
 	initialise_timers();
 	initialise_keyboard();

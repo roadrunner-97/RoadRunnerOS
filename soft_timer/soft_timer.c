@@ -14,7 +14,7 @@ void clock_process()
 {
     while(true)
     {
-        if(ticks % 100 == 0)
+        if(ticks % 5 == 0)
         {
             render_info_int(ticks/100, VGA_COLOR_BLACK, VGA_COLOR_WHITE, 1, 4);
         }

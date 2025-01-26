@@ -116,11 +116,3 @@ void dump_processes()
     // linked_list_dump(&process_list);
     linked_list_dump_with_context(&process_list, dump_process_state);
 }
-
-void blah()
-{
-    for(int i = 0; i < 10; i++)
-	{
-        dump_process_state(circular_iterator_get(&process_iterator));
-	}
-}
