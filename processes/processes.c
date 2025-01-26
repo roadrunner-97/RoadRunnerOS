@@ -3,11 +3,15 @@
 #include "basic_framebuffer.h"
 #include "stdmem.h"
 #include "interrupts.h"
+#include "linked_list.h"
 
 process_t* current_process;
 process_t* other_process; /* will replace with a proper linked list sometime */
 process_t* init_process;
 int process_count = 0;
+
+linked_t process_list;
+circular_iterator_t process_iterator;
 
 void switch_process()
 {
@@ -32,12 +36,7 @@ void switch_process()
     current_process->esp = esp;
 
     /* replace this with a call to the scheduler later on */
-    if(current_process->pid == 0)
-    {
-        current_process = other_process;
-    } else {
-        current_process = init_process;
-    }
+    current_process = circular_iterator_get(&process_iterator);
 
     eip = current_process->eip;
     esp = current_process->esp;
@@ -62,23 +61,66 @@ int create_process(char* process_name, void* process_start)
     new_process->esp = (uint32_t)new_process->stack_base;
     new_process->ebp = (uint32_t)new_process->stack_base;
     new_process->state = PRE_START;
-    other_process = new_process;
+    linked_list_append(&process_list, new_process);
     return new_process->pid;
 }
 
 void multiprocessing_init()
 {
+    linked_list_init(&process_list);
     process_t* init_proc = kmemory_assign_chunk(sizeof(process_t));
+    linked_list_append(&process_list, init_proc);
     memset(init_proc, 0, sizeof(process_t));
     init_proc->process_name = "init process";
     init_proc->pid = 0;
     init_proc->state = PRE_START;
     current_process = init_proc;
     init_process = init_proc;
+    circular_iterator_init(&process_iterator, &process_list);
     process_count++;
+}
+
+void dump_process_state(void* payload)
+{
+    process_t* process = (process_t*)payload;
+    kprintf("PID: %d, \"%s\", State: ", process->pid, process->process_name);
+    switch(process->state)
+    {
+        case PRE_START:
+            kprintf("PRE_START");
+            break;
+        case STARTED:
+            kprintf("STARTED");
+            break;
+        case PAUSED:
+            kprintf("PAUSED");
+            break;
+        case KILLED:
+            kprintf("KILLED");
+            break;
+        default:
+            kprintf("INVALID STATE");
+            break;
+    }
+    kprintf("\n");
 }
 
 int get_process_count()
 {
     return process_count;
+}
+
+void dump_processes()
+{
+    kprintf("====dump processes list====\n");
+    // linked_list_dump(&process_list);
+    linked_list_dump_with_context(&process_list, dump_process_state);
+}
+
+void blah()
+{
+    for(int i = 0; i < 10; i++)
+	{
+        dump_process_state(circular_iterator_get(&process_iterator));
+	}
 }

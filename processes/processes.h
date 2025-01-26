@@ -25,3 +25,5 @@ uint32_t _get_eip();
 void _process_springboard();
 void _yield();
 int get_process_count();
+void dump_processes();
+void blah();

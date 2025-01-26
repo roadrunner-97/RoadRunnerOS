@@ -35,7 +35,6 @@ void linked_list_append(linked_t* list, void* payload)
     if(!list->first)
     {
         list->first = new_node;
-        kprintf("first node is empty, so we populate it here\n");
     } else {
         linked_node_t* leaf_node = list->first;
         while(leaf_node->next)
@@ -50,6 +49,23 @@ void linked_list_append(linked_t* list, void* payload)
 int linked_list_get_size(linked_t* list)
 {
     return list->count;
+}
+
+void linked_list_dump_with_context(linked_t* list, void(*context_function)(void*))
+{
+    if(list->count == 0 || !list->first)
+    {
+        kprintf("list is empty!\n");
+        return;
+    }
+    linked_node_t* current = (linked_node_t*)list->first;
+
+    int idx = 0;
+    while((current)){
+        kprintf("index %d -> ", idx++);
+        context_function(current->payload);
+        current = current->next;
+    }
 }
 
 void linked_list_dump(linked_t* list)
@@ -87,4 +103,32 @@ void* find_node_by_payload(linked_t* list, bool(*filter_function)(void*))
         current = current->next;
     }
     return (void*)0;
+}
+
+void circular_iterator_init(circular_iterator_t* iterator, linked_t* list)
+{
+    if(!list->first || list->count == 0)
+    {
+        kprintf("the list must contain at least 1 element to be used as an iterator");
+    }
+    iterator->list = list;
+    iterator->current = list->first;
+}
+
+void* circular_iterator_get(circular_iterator_t* iterator)
+{
+    void* retval = iterator->current->payload;
+    if(iterator->current->next)
+    {
+        iterator->current = iterator->current->next;
+    } else
+    {
+        if(!iterator->list->first)
+        {
+            kprintf("this list no longer has at least one element");
+            for(;;);
+        }
+        iterator->current = iterator->list->first;
+    }
+    return retval;
 }

@@ -34,6 +34,16 @@ void magic_loop2()
 	}
 }
 
+void magic_loop3()
+{
+	int i = 0;
+	while(true)
+	{
+		kprintf("task 3 says hello! %d\n", i++);
+		spin_wait(100);
+	}
+}
+
 
 void kernel_main(void) 
 {
@@ -54,18 +64,12 @@ void kernel_main(void)
 
 	identity_map(system_directory, 0, &_kernel_end);
 
-	// /* enable MMU here */
+	/* enable MMU here */
 	// set_active_page_directory(system_directory);
-	// multiprocessing_init();
-	// create_process("task2", magic_loop2);
-	// magic_loop1();
+	multiprocessing_init();
+	create_process("task2", magic_loop2);
+	create_process("task3", magic_loop3);
+	magic_loop1();
 
-	linked_t* blah = (linked_t*)kmemory_assign_chunk(sizeof(linked_t));
-	linked_list_init(blah);
-	linked_list_append(blah, (void*)0);
-	linked_list_append(blah, (void*)0);
-	linked_list_append(blah, (void*)0);
-	linked_list_append(blah, (void*)0);
-	linked_list_dump(blah);
 	for(;;);
 }
