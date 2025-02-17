@@ -8,6 +8,7 @@
 #include "stdmem.h"
 #include "processes.h"
 #include "linked_list.h"
+#include "multiboot.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
@@ -46,6 +47,13 @@ void task_that_exits()
 
 void kernel_main(void) 
 {
+	{ /* didn't want to risk clobbering the ebx register so i'm doing this
+		in its own scope using a stack variable. */
+		void* ebx_val = 0;
+		asm volatile ("movl %%ebx, %0" : "=r"(ebx_val));
+		set_multiboot_header_address(ebx_val);
+	}
+
 	/* Initialize terminal interface */
 	terminal_initialize();
 	terminal_info_writestring("Booted RoadrunnerOS 1.0 \"meep meep\"\n", 0, 0);
@@ -67,9 +75,10 @@ void kernel_main(void)
 	initialise_timers();
 	initialise_keyboard();
 	kenable_interrupts(); /* this is what starts the preemption thingy and ultimately gives us processes*/
-	create_process("task 1", task1);
-	create_process("task 2", task2);
-	create_process("exiting task", task_that_exits);
+	// create_process("task 1", task1);
+	// create_process("task 2", task2);
+	// create_process("exiting task", task_that_exits);
+	parse_multiboot_header();
 
 	for(;;);
 }
