@@ -1,7 +1,7 @@
 #include "interrupts_internal.h"
 #include "interrupts.h"
 #include "stdhardware.h"
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 

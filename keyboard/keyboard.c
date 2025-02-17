@@ -1,7 +1,7 @@
 #include "keyboard.h"
 #include "keyboard_internal.h"
 
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 #include "stdhardware.h"
 #include "interrupts.h"
 #include "soft_timer.h"

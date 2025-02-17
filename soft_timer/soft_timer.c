@@ -1,5 +1,5 @@
 #include "soft_timer.h"
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 #include "interrupts.h"
 #include "stdhardware.h"
 #include "processes.h"

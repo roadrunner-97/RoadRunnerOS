@@ -1,4 +1,4 @@
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 #include "descriptor_tables.h"
 #include "interrupts.h"
 #include "soft_timer.h"
@@ -14,46 +14,35 @@
 extern void* _kernel_start;
 extern void* _kernel_end;
 
-void magic_loop1()
+void task1()
 {
 	int i = 0;
 	while(true)
 	{
-		kprintf("task 1 says hello! %d\n", i++);
+		kprintf("task1: %d\n", i);
+		spin_wait(500);
+	}
+}
+
+void task2()
+{
+	int i = 0;
+	while(true)
+	{
+		kprintf("task2: %d\n", i);
+		spin_wait(500);
+	}
+}
+
+void task_that_exits()
+{
+	for(int i = 0; i < 10; i++)
+	{
+		kprintf("exitable task says %d\n", i);
 		spin_wait(2000);
 	}
+	return;
 }
-
-void magic_loop2()
-{
-	int i = 0;
-	while(true)
-	{
-		kprintf("task 2 says hello! %d\n", i++);
-		spin_wait(5000);
-	}
-}
-
-void magic_loop3()
-{
-	int i = 0;
-	while(true)
-	{
-		kprintf("task 3 says hello! %d\n", i++);
-		spin_wait(3000);
-	}
-}
-
-void task_display()
-{
-	while(true)
-	{
-		kprintf("dumping current processes\n");
-		dump_processes();
-		spin_wait(2000);
-	}
-}
-
 
 void kernel_main(void) 
 {
@@ -74,14 +63,13 @@ void kernel_main(void)
 
 	/* enable MMU here */
 	// set_active_page_directory(system_directory);
-	create_process("task2", magic_loop2);
-	create_process("task3", magic_loop3);
-	create_process("top", task_display);
 
 	initialise_timers();
 	initialise_keyboard();
 	kenable_interrupts(); /* this is what starts the preemption thingy and ultimately gives us processes*/
+	create_process("task 1", task1);
+	create_process("task 2", task2);
+	create_process("exiting task", task_that_exits);
 
-	magic_loop1();
 	for(;;);
 }

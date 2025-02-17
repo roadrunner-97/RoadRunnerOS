@@ -3,7 +3,7 @@
 #include "interrupts.h"
 #include "stdmem.h"
 #include "stdhardware.h"
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 
 gdt_entry_t gdts[3];
 struct ptr_with_size_t pws_gdt;

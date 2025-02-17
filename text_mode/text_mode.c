@@ -1,4 +1,4 @@
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 #include "stdmem.h"
 #include "stdmaths.h"
 #include "stdarg.h"

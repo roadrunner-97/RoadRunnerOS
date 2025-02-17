@@ -1,6 +1,6 @@
 #include "linked_list.h"
 #include "memory.h"
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 
 void linked_list_init(linked_t* list)
 {

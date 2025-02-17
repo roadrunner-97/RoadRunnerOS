@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 #include "memory.h"
 
 void* mem_space_begin = 0;

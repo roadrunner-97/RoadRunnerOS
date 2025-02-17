@@ -1,6 +1,6 @@
 #include "processes.h"
 #include "memory.h"
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 #include "stdmem.h"
 #include "interrupts.h"
 #include "linked_list.h"
@@ -12,6 +12,12 @@ int process_count = 0;
 
 linked_t process_list;
 circular_iterator_t process_iterator;
+
+void catch_exiting_task()
+{
+    kprintf("task %s, PID %d has exited", current_process->process_name, current_process->pid);
+    current_process->state = KILLED;
+}
 
 void switch_process()
 {
@@ -57,9 +63,10 @@ int create_process(char* process_name, void* process_start)
     new_process->process_name = process_name;
     new_process->pid = process_count++;
     new_process->stack_base = kmemory_assign_chunk(1024) + 1024;
+    ((uint32_t*)(new_process->stack_base))[255] = (uint32_t)catch_exiting_task;
     new_process->eip = (uint32_t)process_start;
-    new_process->esp = (uint32_t)new_process->stack_base;
-    new_process->ebp = (uint32_t)new_process->stack_base;
+    new_process->esp = (uint32_t)new_process->stack_base - 4;
+    new_process->ebp = (uint32_t)new_process->stack_base - 4;
     new_process->state = PRE_START;
     linked_list_append(&process_list, new_process);
     return new_process->pid;

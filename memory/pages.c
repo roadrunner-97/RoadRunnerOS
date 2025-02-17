@@ -1,6 +1,6 @@
 #include "pages.h"
 #include "memory.h"
-#include "basic_framebuffer.h"
+#include "text_mode.h"
 #include "memory_internal.h"
 #include "interrupts.h"
 
