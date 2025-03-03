@@ -18,11 +18,11 @@ forced to be within the first 8 KiB of the kernel file.
 .long MAGIC
 .long FLAGS
 .long CHECKSUM
-.skip 24
-.long 480
+.skip 20
+.long 0
 .long 640
-.long 32
-.skip 24
+.long 480
+.long 0
 
 /*
 The multiboot standard does not define the value of the stack pointer register

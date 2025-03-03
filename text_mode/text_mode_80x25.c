@@ -2,16 +2,10 @@
 #include "stdmem.h"
 #include "stdmaths.h"
 #include "stdarg.h"
+#include "text_mode_80x25.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
 
-size_t strlen(const char* str) 
-{
-	size_t len = 0;
-	while (str[len])
-		len++;
-	return len;
-}
 
 static size_t terminal_row;
 static size_t terminal_column;
@@ -20,6 +14,14 @@ static text_element_t* buffer;
 
 static color_t fg_default = VGA_COLOR_BLACK;
 static color_t bg_default = VGA_COLOR_WHITE;
+
+size_t strlen(const char* str) 
+{
+	size_t len = 0;
+	while (str[len])
+		len++;
+	return len;
+}
 
 void terminal_initialize(void) 
 {

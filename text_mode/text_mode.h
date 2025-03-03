@@ -24,18 +24,6 @@ typedef enum {
 	VGA_COLOR_WHITE = 15,
 } color_t;
 
-typedef struct __attribute__((packed)) {
-	uint8_t glyph;
-	color_t fg: 4;
-	color_t bg: 4;
-} text_element_t;
-_Static_assert(sizeof(text_element_t) == 2, "you fucked up buddy");
-
-#define VGA_WIDTH 80
-#define VGA_HEIGHT 25
-
-#define INDEX(x, y) ((y) * VGA_WIDTH + (x))
-
 #define COL_BG_ERROR   VGA_COLOR_RED
 #define COL_FG_ERROR   VGA_COLOR_WHITE
 
@@ -44,7 +32,6 @@ _Static_assert(sizeof(text_element_t) == 2, "you fucked up buddy");
 
 #define COL_BG_INFO    VGA_COLOR_BLUE
 #define COL_FG_INFO    VGA_COLOR_WHITE
-
 
 size_t strlen(const char* str);
 void terminal_initialize(void);
