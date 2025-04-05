@@ -4,6 +4,7 @@
 #include "text_mode_vga.h"
 #include "text_mode.h"
 #include "soft_timer.h"
+#include "Roboto Light/Roboto Light_24.h"
 
 size_t strlen(const char* str)
 {
@@ -46,7 +47,10 @@ void terminal_initialize()
     }
 }
 
-void terminal_draw_char(char c, color_t fg, color_t bg, size_t x, size_t y){}
+void terminal_draw_char(char c, color_t fg, color_t bg, size_t x, size_t y){
+
+}
+
 void terminal_putchar(char c, color_t fg, color_t bg){}
 void terminal_info_putchar(char c, color_t fg, color_t bg, int info_column, int info_row){}
 void terminal_write(const char* data, size_t size, color_t fg, color_t bg){}

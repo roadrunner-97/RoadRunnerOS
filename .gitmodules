@@ -1,0 +1,3 @@
+[submodule "extras/TTF2BMH"]
+	path = extras/TTF2BMH
+	url = https://github.com/jdmorise/TTF2BMH
