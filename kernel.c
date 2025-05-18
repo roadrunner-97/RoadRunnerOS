@@ -20,7 +20,7 @@ void task1()
 	int i = 0;
 	while(true)
 	{
-		kprintf("task1: %d\n", i);
+		kprintf("task1: %d\n", i++);
 		spin_wait(500);
 	}
 }
@@ -30,7 +30,7 @@ void task2()
 	int i = 0;
 	while(true)
 	{
-		kprintf("task2: %d\n", i);
+		kprintf("task2: %d\n", i++);
 		spin_wait(500);
 	}
 }
@@ -55,7 +55,8 @@ void kernel_main(void)
 	}
 
 	/* Initialize terminal interface */
-	// terminal_info_writestring("Booted RoadrunnerOS 1.0 \"meep meep\"\n", 0, 0);
+	terminal_initialize();
+	terminal_info_writestring("Booted RoadrunnerOS 1.0 \"meep meep\"\n", 0, 0);
 	gdt_initialise();
 	idt_initialise();
 	irq_initialise();
@@ -69,15 +70,15 @@ void kernel_main(void)
 	identity_map(system_directory, 0, &_kernel_end);
 
 	// /* enable MMU here */
-	// // set_active_page_directory(system_directory);
+	// set_active_page_directory(system_directory);
 
 	initialise_timers();
 
 	initialise_keyboard();
 	kenable_interrupts(); /* this is what starts the preemption thingy and ultimately gives us processes*/
-	// // create_process("task 1", task1);
-	// // create_process("task 2", task2);
-	// // create_process("exiting task", task_that_exits);
+	create_process("task 1", task1);
+	create_process("task 2", task2);
+	create_process("exiting task", task_that_exits);
 	// parse_multiboot_header();
 
 	terminal_initialize();

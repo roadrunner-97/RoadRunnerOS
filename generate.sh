@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-cmake -Bbuild
+cmake -Bbuild -DUSE_TEXT_FB=1
 make -Cbuild
 
 if [[ "$1" == "-bin" ]]; then
