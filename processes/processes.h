@@ -44,8 +44,11 @@ uint32_t _get_eip();
 
 /**
  * @brief the final jump into the execution context of the new process.
+ * @param eip the eip of the process being jumped into
+ * @param ebp the ebp of the process being jumped into
+ * @param esp the esp of the process being jumped into
  */
-void _process_springboard();
+void _process_springboard(uint32_t eip, uint32_t ebp, uint32_t esp);
 
 /**
  * @brief call this to indicate that your process doesn't need the rest of the time allocated to it currently.

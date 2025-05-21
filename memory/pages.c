@@ -21,7 +21,7 @@ void handle_page_fault_interrupt()
 void initialise_pagefault_handler()
 {
     kprintf("registering page fault handler interrupt\n");
-    install_irq_handler(13, handle_page_fault_interrupt);
+    install_irq_handler(13, (irq_handler_t)&handle_page_fault_interrupt);
 }
 
 int get_page_directory_offset(void* address)

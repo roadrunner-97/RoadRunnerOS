@@ -7,7 +7,6 @@
 #include "pages.h"
 #include "stdmem.h"
 #include "processes.h"
-#include "linked_list.h"
 #include "multiboot.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
@@ -21,7 +20,7 @@ void task1()
 	while(true)
 	{
 		kprintf("task1: %d\n", i++);
-		spin_wait(500);
+		spin_wait(100);
 	}
 }
 
@@ -56,21 +55,22 @@ void kernel_main(void)
 
 	/* Initialize terminal interface */
 	terminal_initialize();
-	terminal_info_writestring("Booted RoadrunnerOS 1.0 \"meep meep\"\n", 0, 0);
+	terminal_info_writestring("Booted RoadrunnerOS 1.0 \"meep meep\"\n",0, 0);
 	gdt_initialise();
 	idt_initialise();
 	irq_initialise();
 
-	uint32_t aligned_start = (uint32_t)round_up_to_page_address(&_kernel_end);
-	kmemory_space_assign((void*)aligned_start, 0x100000);
+
+	uint32_t aligned_kernel_end = (uint32_t)round_up_to_page_address(&_kernel_end);
+	kmemory_space_assign((void*)aligned_kernel_end, 0x100000);
 	multiprocessing_init(); /* we want to do this pretty quick to allow other stuff to spin up processes */
 
 	page_directory_entry_t* system_directory = create_page_directory();
 
-	identity_map(system_directory, 0, &_kernel_end);
+	identity_map(system_directory, 0, &aligned_kernel_end);
 
 	// /* enable MMU here */
-	// set_active_page_directory(system_directory);
+	set_active_page_directory(system_directory);
 
 	initialise_timers();
 
@@ -81,6 +81,5 @@ void kernel_main(void)
 	create_process("exiting task", task_that_exits);
 	// parse_multiboot_header();
 
-	terminal_initialize();
 	for(;;);
 }
