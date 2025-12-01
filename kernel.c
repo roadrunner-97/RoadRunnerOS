@@ -67,7 +67,7 @@ void kernel_main(void)
 
 	page_directory_entry_t* system_directory = create_page_directory();
 
-	identity_map(system_directory, 0, &aligned_kernel_end);
+	identity_map(system_directory, 0,(void*)0x200000);
 
 	// /* enable MMU here */
 	set_active_page_directory(system_directory);

@@ -1,4 +1,5 @@
 #pragma once
+#include "pages.h"
 #include "stdint.h"
 
 typedef enum
@@ -15,6 +16,7 @@ typedef struct{
     void* stack_base;
     uint32_t ebp, esp, eip;
     proc_lifecycle_t state;
+    page_directory_entry_t* page_directory;
 } process_t;
 
 /**

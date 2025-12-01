@@ -1,5 +1,6 @@
 #include "processes.h"
 #include "memory.h"
+#include "pages.h"
 #include "text_mode.h"
 #include "stdmem.h"
 #include "interrupts.h"
@@ -43,7 +44,7 @@ void switch_process()
 
     /* replace this with a call to the scheduler later on */
     current_process = circular_iterator_get(&process_iterator);
-
+    set_active_page_directory(current_process->page_directory);
     eip = current_process->eip;
     esp = current_process->esp;
     ebp = current_process->ebp;
@@ -68,6 +69,9 @@ int create_process(char* process_name, void* process_start)
     new_process->esp = (uint32_t)new_process->stack_base - 4;
     new_process->ebp = (uint32_t)new_process->stack_base - 4;
     new_process->state = PRE_START;
+    new_process->page_directory = create_page_directory();
+    identity_map(new_process->page_directory, 0, (void*)0x200000);
+
     linked_list_append(&process_list, new_process);
     return new_process->pid;
 }
@@ -81,6 +85,9 @@ void multiprocessing_init()
     init_proc->process_name = "init process";
     init_proc->pid = 0;
     init_proc->state = PRE_START;
+    init_proc->page_directory = create_page_directory();
+    identity_map(init_proc->page_directory, 0, (void*)0x200000);
+
     current_process = init_proc;
     init_process = init_proc;
     circular_iterator_init(&process_iterator, &process_list);
