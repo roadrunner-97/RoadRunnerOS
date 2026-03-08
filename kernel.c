@@ -30,7 +30,7 @@ void task2()
 	while(true)
 	{
 		kprintf("task2: %d\n", i++);
-		spin_wait(500);
+		spin_wait(200);
 	}
 }
 
@@ -39,7 +39,7 @@ void task_that_exits()
 	for(int i = 0; i < 10; i++)
 	{
 		kprintf("exitable task says %d\n", i);
-		spin_wait(2000);
+		spin_wait(500);
 	}
 	return;
 }
