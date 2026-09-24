@@ -42,6 +42,19 @@ char* exception_friendly_names[] =
 void _fault_handler(regs_t *r)
 {
     (void)r;
+    if(r->int_no <= 18)
+    {
+        switch(r->int_no) {
+            case 14:
+                uint32_t fault_address = 0;
+                asm volatile ("mov %%cr2, %0" : "=r"(fault_address));
+                kprintf("%s addr=%h instruction=%h err=%h", exception_friendly_names[r->int_no], fault_address, r->eip, r->err_code);
+                break;
+
+            default: kprintf("unhandled exception: %s", exception_friendly_names[r->int_no]);
+        }
+        while(1);
+    }
 }
 
 irq_handler_t irq_handlers[16] = 

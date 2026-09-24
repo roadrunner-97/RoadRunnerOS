@@ -96,22 +96,27 @@ _isr9:
 _isr10:
     cli
     push 0x0A /* no dummy here because this one already has a value pushed on the stack */
+    jmp isr_handler_common
 
 _isr11:
     cli
     push 0x0B /* no dummy here because this one already has a value pushed on the stack */
+    jmp isr_handler_common
 
 _isr12:
     cli
     push 0x0C /* no dummy here because this one already has a value pushed on the stack */
+    jmp isr_handler_common
 
 _isr13:
     cli
     push 0x0D /* no dummy here because this one already has a value pushed on the stack */
+    jmp isr_handler_common
 
 _isr14:
     cli
     push 0x0E /* no dummy here because this one already has a value pushed on the stack */
+    jmp isr_handler_common
 
 _isr15:
     cli

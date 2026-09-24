@@ -70,6 +70,7 @@ void kernel_main(void)
 	identity_map(system_directory, 0,(void*)0x200000);
 
 	// /* enable MMU here */
+	initialise_pagefault_handler();
 	set_active_page_directory(system_directory);
 
 	initialise_timers();
