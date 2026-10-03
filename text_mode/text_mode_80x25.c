@@ -2,6 +2,7 @@
 #include "stdmem.h"
 #include "stdmaths.h"
 #include "stdarg.h"
+#include "stdhardware.h"
 #include "text_mode_80x25.h"
 
 #define MAGIC_BREAK asm volatile ("xchgw %bx, %bx");
@@ -24,7 +25,20 @@ size_t strlen(const char* str)
 }
 
 void terminal_initialize(void) 
-{
+{	
+	read_byte_from_port(VGA_INPUT_STATUS_REG_ADDR); // this forces the FSM of the VGA settings port back to reset condition
+	
+	write_byte_to_port(VGA_ATTR_CONTR_WRITE_PORT_ADDR, /*select the mode register and keep the display on*/
+	    VGA_ATTR_CONTR_MODE_SEL_OFFSET | VGA_ATTR_CONTR_DISP_EN_OFFSET);
+	
+		uint32_t mode = read_byte_from_port(VGA_ATTR_CONTR_READ_PORT_ADDR); //get the current mode status
+	
+	write_byte_to_port(VGA_ATTR_CONTR_WRITE_PORT_ADDR,
+	    mode & ~VGA_ATTR_CONTR_MODE_BLINK_OFFSET); //modify the mode and write it back
+	
+		read_byte_from_port(VGA_INPUT_STATUS_REG_ADDR); // reset the FSM for the next user
+	
+
 	terminal_row = 2;
 	terminal_column = 0;
 	buffer = (text_element_t*) 0xB8000;

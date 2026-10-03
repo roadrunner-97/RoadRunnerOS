@@ -33,6 +33,16 @@ typedef enum {
 #define COL_BG_INFO    VGA_COLOR_BLUE
 #define COL_FG_INFO    VGA_COLOR_WHITE
 
+#define VGA_INPUT_STATUS_REG_ADDR 0x3DA
+#define VGA_ATTR_CONTR_WRITE_PORT_ADDR 0x3C0
+#define VGA_ATTR_CONTR_READ_PORT_ADDR 0x3C1
+
+#define VGA_ATTR_CONTR_MODE_SEL_OFFSET 0x20
+#define VGA_ATTR_CONTR_DISP_EN_OFFSET 0x10
+
+#define VGA_ATTR_CONTR_MODE_BLINK_OFFSET 0x08
+
+
 size_t strlen(const char* str);
 void terminal_initialize(void);
 void terminal_draw_char(char c, color_t fg, color_t bg, size_t x, size_t y);
