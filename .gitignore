@@ -5,3 +5,4 @@ a.out
 docs/
 .vscode/settings.json
 .cache
+.lock

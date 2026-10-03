@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 cmake -Bbuild -DUSE_TEXT_FB=1

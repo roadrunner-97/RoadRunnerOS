@@ -12,6 +12,7 @@ set(CMAKE_C_FLAGS "-m32 -fno-stack-protector -nostdlib -ffreestanding -nostdlib 
 set(CMAKE_ASM_FLAGS "-m32")
 set(CMAKE_EXE_LINKER_FLAGS "-T ${CMAKE_CURRENT_SOURCE_DIR}/extras/linker.ld")
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY) #i don't know how it worked before but this fixes build on nixos
 
 add_subdirectory(bootcode)
 add_subdirectory(kstd)
