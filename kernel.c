@@ -14,35 +14,6 @@
 extern void* _kernel_start;
 extern void* _kernel_end;
 
-void task1()
-{
-	int i = 0;
-	while(true)
-	{
-		kprintf("task1: %d\n", i++);
-		spin_wait(100);
-	}
-}
-
-void task2()
-{
-	int i = 0;
-	while(true)
-	{
-		kprintf("task2: %d\n", i++);
-		spin_wait(200);
-	}
-}
-
-void task_that_exits()
-{
-	for(int i = 0; i < 10; i++)
-	{
-		kprintf("exitable task says %d\n", i);
-		spin_wait(500);
-	}
-	return;
-}
 
 void kernel_main(void) 
 {
@@ -72,14 +43,11 @@ void kernel_main(void)
 	// /* enable MMU here */
 	initialise_pagefault_handler();
 	set_active_page_directory(system_directory);
-
+	page_tables_self_test();
 	initialise_timers();
 
 	initialise_keyboard();
 	kenable_interrupts(); /* this is what starts the preemption thingy and ultimately gives us processes*/
-	create_process("task 1", task1);
-	create_process("task 2", task2);
-	create_process("exiting task", task_that_exits);
 	// parse_multiboot_header();
 
 	for(;;);

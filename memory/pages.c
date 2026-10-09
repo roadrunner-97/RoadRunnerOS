@@ -3,8 +3,14 @@
 #include "text_mode.h"
 #include "memory_internal.h"
 #include "interrupts.h"
+#include "paging_tests.h"
 
 page_directory_entry_t* page_directory;
+
+void page_tables_self_test()
+{
+    run_paging_tests();
+}
 
 void set_active_page_directory(page_directory_entry_t* active_directory)
 {

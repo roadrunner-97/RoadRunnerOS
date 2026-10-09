@@ -40,6 +40,12 @@ typedef struct __attribute__((packed))
 _Static_assert(sizeof(page_directory_entry_t) == 4, "page directory entry size is wrong :(");
 
 /**
+ * @brief run a suite of tests for virtual memory support and correctness
+ */
+void page_tables_self_test();
+
+
+/**
  * @brief register a function to be called when the processor gets a page fault exception.
  */
 void initialise_pagefault_handler();
