@@ -5,5 +5,5 @@ a.out
 docs/
 .vscode/settings.json
 .cache
-.lock
+flake.lock
 .ccache
