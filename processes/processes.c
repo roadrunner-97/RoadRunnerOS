@@ -46,17 +46,18 @@ void switch_process()
 
     /* replace this with a call to the scheduler later on */
     current_process = circular_iterator_get(&process_iterator);
-    set_active_page_directory(current_process->page_directory);
     eip = current_process->eip;
     esp = current_process->esp;
     ebp = current_process->ebp;
 
+    bool first_start = false;
     if(current_process->state == PRE_START)
     {
         current_process->state = STARTED;
-        kenable_interrupts();
+        first_start = true;
     }
-    _process_springboard(eip, ebp, esp);
+
+    _process_springboard(eip, ebp, esp, (uint32_t)(current_process->page_directory), first_start);
 }
 
 int create_process(char* process_name, void* process_start)
@@ -65,14 +66,21 @@ int create_process(char* process_name, void* process_start)
     memset(new_process, 0, sizeof(process_t));
     new_process->process_name = process_name;
     new_process->pid = process_count++;
-    new_process->stack_base = kmemory_assign_chunk(4096) + 4096;
-    *stack_get_element_u32(new_process->stack_base, 0) = (uint32_t)catch_exiting_task;
+
+    new_process->page_directory = create_page_directory();
+    identity_map(new_process->page_directory, 0, (void*)0x200000);
+    
+    void* stack_page = kmemory_assign_page_aligned_chunk(STACK_SIZE);
+    kprintf("got a page at %x\n", stack_page);
+    map_virtual_page_to_physical_page(new_process->page_directory, (void*)round_down_to_page_address((void*)STACK_BASE), stack_page);
+    new_process->stack_base = (void*)STACK_BASE;
+    kprintf("mapped physical %x to virtual %x\n", stack_page, new_process->stack_base);
+    
+    *stack_get_element_u32(stack_page + STACK_SIZE -1, 0) = (uint32_t)catch_exiting_task;
     new_process->eip = (uint32_t)process_start;
     new_process->esp = (uint32_t) stack_get_element_u32(new_process->stack_base, 0);
     new_process->ebp = (uint32_t) stack_get_element_u32(new_process->stack_base, 0);
     new_process->state = PRE_START;
-    new_process->page_directory = create_page_directory();
-    identity_map(new_process->page_directory, 0, (void*)0x200000);
 
     linked_list_append(&process_list, new_process);
     return new_process->pid;

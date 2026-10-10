@@ -2,6 +2,8 @@
 #include "pages.h"
 #include "stdint.h"
 
+#define STACK_SIZE 4096
+#define STACK_BASE 0xFFFFFFFF /* this is the highest *byte* address of the stack, but it needs to be rounded down to 0xFFFFFFFC for 32 bit numbers*/
 typedef enum
 {
     PRE_START,
@@ -49,8 +51,10 @@ uint32_t _get_eip();
  * @param eip the eip of the process being jumped into
  * @param ebp the ebp of the process being jumped into
  * @param esp the esp of the process being jumped into
+ * @param cr3 the cr3 of the process being jumped into
+ * @param enable_interrupts whether to enable interrupts (used on first start of a process)
  */
-void _process_springboard(uint32_t eip, uint32_t ebp, uint32_t esp);
+void _process_springboard(uint32_t eip, uint32_t ebp, uint32_t esp, uint32_t cr3, bool starting);
 
 /**
  * @brief call this to indicate that your process doesn't need the rest of the time allocated to it currently.

@@ -8,5 +8,5 @@
  */
 static inline uint32_t* stack_get_element_u32(void* stack_top, uint32_t n)
 {
-    return (uint32_t*)stack_top - 1 - n;
+    return (uint32_t*)((uint32_t)stack_top & ~3u) - n; //round down to a multiple of 4 and then subtract n
 }

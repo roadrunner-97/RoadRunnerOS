@@ -14,6 +14,12 @@
 extern void* _kernel_start;
 extern void* _kernel_end;
 
+void my_epic_new_process()
+{
+	kprintf("Hello world :)\n");
+	return;
+}
+
 
 void kernel_main(void) 
 {
@@ -50,5 +56,6 @@ void kernel_main(void)
 	kenable_interrupts(); /* this is what starts the preemption thingy and ultimately gives us processes*/
 	// parse_multiboot_header();
 
+	create_process("hello world factory", &my_epic_new_process);
 	for(;;);
 }
