@@ -223,6 +223,45 @@ void render_hex_colour(int num, color_t fg, color_t bg)
 	}
 }
 
+void render_uhex_colour(unsigned int num, color_t fg, color_t bg)
+{
+	terminal_putchar('0', fg, bg);
+	terminal_putchar('x', fg, bg);
+
+	int i = 1;
+	while(i < 8 && power(16, i) <= num){i++;}
+	i--;
+	for(; i>= 0; i--)
+	{
+		unsigned int digit = num / power(16, i);
+		switch(digit)
+		{
+			case 10:
+				terminal_putchar('A', fg, bg);
+				break;
+			case 11:
+				terminal_putchar('B', fg, bg);
+				break;
+			case 12:
+				terminal_putchar('C', fg, bg);
+				break;
+			case 13:
+				terminal_putchar('D', fg, bg);
+				break;
+			case 14:
+				terminal_putchar('E', fg, bg);
+				break;
+			case 15:
+				terminal_putchar('F', fg, bg);
+				break;
+			default:
+				terminal_putchar('0' + digit, fg, bg);
+		}
+		num -= digit * power(16, i);
+	}
+}
+
+
 void terminal_info_writestring(const char* data, int info_row, int info_start_column)
 {
 	terminal_info_write(data, strlen(data), bg_default, fg_default, info_row, info_start_column);
@@ -258,6 +297,10 @@ void kprintf(char* formatter, ...)
 				render_hex_colour(va_arg(p_args, uint32_t), fg, bg);
 				i+=2;
 			}
+			else if(formatter[i+1] == 'x') {
+				render_uhex_colour(va_arg(p_args, uint32_t), fg, bg);
+				i+=2;
+			}
 			else if(formatter[i+1] == 'c') {
 				terminal_putchar((uint8_t)va_arg(p_args, int), fg, bg);
 				i+=2;
@@ -268,7 +311,6 @@ void kprintf(char* formatter, ...)
 				fg = va_arg(p_args, color_t);
 				bg = va_arg(p_args, color_t);
 				i+=2;
-
 			}
 		} else {
 			terminal_putchar(formatter[i], fg, bg);

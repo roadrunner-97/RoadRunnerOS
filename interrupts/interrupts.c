@@ -48,7 +48,7 @@ void _fault_handler(regs_t *r)
             case 14:
                 uint32_t fault_address = 0;
                 asm volatile ("mov %%cr2, %0" : "=r"(fault_address));
-                kprintf("%s addr=%h instruction=%h err=%h", exception_friendly_names[r->int_no], fault_address, r->eip, r->err_code);
+                kprintf("%s addr=%x instruction=%x err=%d", exception_friendly_names[r->int_no], fault_address, r->eip, r->err_code);
                 break;
 
             default: kprintf("unhandled exception: %s", exception_friendly_names[r->int_no]);
