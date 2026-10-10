@@ -14,12 +14,26 @@
 extern void* _kernel_start;
 extern void* _kernel_end;
 
-void my_epic_new_process()
+void my_epic_new_process_one()
 {
-	kprintf("Hello world :)\n");
+	for(int i = 0; i < 5; i++)
+		{
+			kprintf("Hello world from task 1: %d :)\n", i);
+			spin_wait(500);
+		}
 	return;
 }
 
+void my_epic_new_process_two()
+{
+	for(int i = 0; i < 5; i++)
+		{
+			kprintf("Hello world from task 2: %d :)\n", i);
+			spin_wait(500);
+
+		}
+	return;
+}
 
 void kernel_main(void) 
 {
@@ -56,6 +70,8 @@ void kernel_main(void)
 	kenable_interrupts(); /* this is what starts the preemption thingy and ultimately gives us processes*/
 	// parse_multiboot_header();
 
-	create_process("hello world factory", &my_epic_new_process);
+	create_process("task 1", &my_epic_new_process_one);
+	create_process("task 2", &my_epic_new_process_two);
+
 	for(;;);
 }
