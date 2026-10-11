@@ -46,3 +46,21 @@ _Static_assert(sizeof(idt_entry_t) == 8, "idt_entry_t has grown?");
 
 extern void _gdt_set_asm(); /* defined in gdt.s */
 extern void _idt_set_asm();
+
+
+/**
+ * @brief construct the byte used to set granularity of the GDTs.
+ * @param granularity if false, we use byte page table granularity, if true, we use 4KiB page sizes.
+ * @param operand_size if false, define a 16 bit segment, if true, define a 32 bit segment.
+ * @todo extend this with the length byte for 64 bit. currently, all other bits are 0. 
+ */
+uint8_t generate_granularity_byte(bool granularity, bool operand_size);
+
+
+/**
+ * @brief construct the access byte for the GDTs
+ * @param gdt_entry_present this shouldn't even be a param lol it disables the entry if you clear it.
+ * @param ring_number we only ever use ring 0 (supervisor) or ring 3 (user) modes.
+ * @param descripter_type if true, defines a code/data segment, if false, defines a system segment (TSS).
+ */
+uint8_t generate_access_byte(bool gdt_entry_present, uint8_t ring_number, bool descriptor_type, uint8_t type);

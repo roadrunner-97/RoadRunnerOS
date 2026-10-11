@@ -5,7 +5,7 @@
 #include "stdhardware.h"
 #include "text_mode.h"
 
-gdt_entry_t gdts[3];
+gdt_entry_t gdts[5];
 struct ptr_with_size_t pws_gdt;
 
 uint8_t generate_access_byte(bool gdt_entry_present, uint8_t ring_number, bool descriptor_type, uint8_t type)
@@ -44,9 +44,16 @@ void gdt_initialise()
     set_gdt_entry(0, 0, 0,          0,    0);
     set_gdt_entry(1, 0, 0x000FFFFF, generate_access_byte(true, 0, true, 10), generate_granularity_byte(true, true));
     set_gdt_entry(2, 0, 0x000FFFFF, generate_access_byte(true, 0, true, 2), generate_granularity_byte(true, true));
+    set_gdt_entry(3, 0, 0x000FFFFF, generate_access_byte(true, 3, true, 10), generate_granularity_byte(true, true));
+    set_gdt_entry(4, 0, 0x000FFFFF, generate_access_byte(true, 3, true, 2), generate_granularity_byte(true, true));
 
     pws_gdt.base = (uint32_t) &gdts[0];
-    pws_gdt.len = (8 * 3) - 1;
+
+    /* Size: The size of the table in bytes subtracted by 1.
+     * This subtraction occurs because the maximum value of Size is 65535,
+     * while the GDT can be up to 65536 bytes in length (8192 entries).
+     * Further, no GDT can have a size of 0 bytes.*/
+    pws_gdt.len = sizeof(gdts) - 1;
     kdisable_interrupts();
     _gdt_set_asm();
     kprintf("%#GDT Loaded\n", COL_FG_INFO, COL_BG_INFO);
