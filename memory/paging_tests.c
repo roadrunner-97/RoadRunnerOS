@@ -6,18 +6,19 @@
 
 void test_virtual_page_clash()
 {
+    /* this test must be run in ring 0 */
     page_directory_entry_t* p_page_table_A = create_page_directory();
     page_directory_entry_t* p_page_table_B = create_page_directory();
 
-    identity_map(p_page_table_A, 0,(void*)0x200000); /* for the moment we need to map the kernel here*/
-	identity_map(p_page_table_B, 0,(void*)0x200000);
+    identity_map(p_page_table_A, 0,(void*)0x200000, false); /* for the moment we need to map the kernel here*/
+	identity_map(p_page_table_B, 0,(void*)0x200000, false);
 
     /* test that we have a random page with the same address that has different physical memory */
     void* test_page_A = kmemory_assign_page_aligned_chunk(4096);
-    map_virtual_page_to_physical_page(p_page_table_A, (void*)0x400000, test_page_A); // give this page to the new process
+    map_virtual_page_to_physical_page(p_page_table_A, (void*)0x400000, test_page_A, false); // give this page to the new process
 
     void* test_page_B = kmemory_assign_page_aligned_chunk(4096);
-    map_virtual_page_to_physical_page(p_page_table_B, (void*)0x400000, test_page_B); // give this page to the new process
+    map_virtual_page_to_physical_page(p_page_table_B, (void*)0x400000, test_page_B, false); // give this page to the new process
 
     set_active_page_directory(p_page_table_A);
     

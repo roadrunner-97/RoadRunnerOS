@@ -56,7 +56,7 @@ void kernel_main(void)
 	kmemory_space_assign((void*)aligned_kernel_end, 0x100000);
 	page_directory_entry_t* system_directory = create_page_directory();
 
-	identity_map(system_directory, 0,(void*)0x200000);
+	identity_map(system_directory, 0,(void*)0x200000, false);
 	multiprocessing_init(); /* we want to do this pretty quick to allow other stuff to spin up processes */
 
 	// /* enable MMU here */

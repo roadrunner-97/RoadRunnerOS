@@ -53,7 +53,7 @@ void initialise_pagefault_handler();
 /**
  * @brief create a new empty page directory.
  * this function creates a 4kB block of page_directory_entry_t elements at 1024 * 4B elements.
- * they are guaranteed to be all have present=false, but no other setting is done. 
+ * they are guaranteed to be all have present=false, but no other setting is done.
  * @return a pointer to a block of 1024 page_directory_entry_t elements.
  */
 page_directory_entry_t* create_page_directory();
@@ -76,19 +76,21 @@ page_table_entry_t* create_new_page_table(page_directory_entry_t* directory, int
 /**
  * @brief map a page in virtual address space to one in physical address space.
  * @param directory the directory under which the mapping should occur.
- * @param the virtual address to be mapped.
- * @param the physical address to be mapped onto.
+ * @param virtual_page the virtual address to be mapped.
+ * @param physical_page the physical address to be mapped onto.
+ * @param user_accessible_page true if the page is accessible by both ring 0 and ring 3, false if only accessible by ring 0.
  * note the addresses need not be page-aligned as the function will round down to the nearest page boundary for you.
  * they also don't need to share a common page offset, ie: map 4097-> 123 will work.
  */
-void map_virtual_page_to_physical_page(page_directory_entry_t* directory, void* virtual_page, void* physical_page);
+void map_virtual_page_to_physical_page(page_directory_entry_t* directory, void* virtual_page, void* physical_page, bool user_accessible_page);
 
 /**
  * @brief map all the addresses of the kernel to themselves to stop the processor shitting the bed (technical term) when paging is enabled.
  * @param directory the directory in which the identity mapping occurs.
  * @param start_address pointer to somewhere in the first page to be protected
  * @param end_address pointer to somewhere in the last page to be protected.
+ * @param user_accessible_map true if ring 3 processes need to be able to access these mappings in this directory, false if only kernel needs it.
  * this is used to protect ie: the stack and interrupts etc.. from being mapped to nothing.
  * If you don't do this, you'll get a double-fault exception.
  */
-void identity_map(page_directory_entry_t* directory, void* start_address, void* end_address);
+void identity_map(page_directory_entry_t* directory, void* start_address, void* end_address, bool user_accessible_map);
