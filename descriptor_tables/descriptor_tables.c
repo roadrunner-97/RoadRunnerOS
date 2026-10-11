@@ -4,25 +4,36 @@
 #include "stdmem.h"
 #include "stdhardware.h"
 #include "text_mode.h"
+#include <stdint.h>
 
 gdt_entry_t gdts[5];
 struct ptr_with_size_t pws_gdt;
 
-uint8_t generate_access_byte(bool gdt_entry_present, uint8_t ring_number, bool descriptor_type, uint8_t type)
+uint8_t generate_access_byte(bool gdt_entry_present, uint8_t ring_number, bool descriptor_type,
+                             bool executable, bool direction_conforming, bool read_write, bool accessed)
 {
     uint8_t access_byte = 0;
     access_byte |= (uint8_t)(gdt_entry_present) << GDT_ENTRY_PRESENT_BIT_LOCATION;
     access_byte |= ((ring_number) & RING_NUMBER_SIZE) << RING_NUMBER_BIT_LOCATION;
     access_byte |= (uint8_t)(descriptor_type) << DESCRIPTOR_TYPE_LOCATION;
-    access_byte |= type & TYPE_SIZE;
+    access_byte |= (uint8_t)(executable) << EXECUTABLE_BIT_LOCATION;
+    access_byte |= (uint8_t)(direction_conforming) << DIRECTION_CONFORMING_BIT_LOCATION;
+    access_byte |= (uint8_t)(read_write) << READABLE_WRITEABLE_BIT_LOCATION;
+    access_byte |= (uint8_t)(accessed) << ACCESSED_BIT_LOCATION;
     return access_byte;
 }
 
-uint8_t generate_granularity_byte(bool granularity, bool operand_size)
+uint8_t generate_granularity_byte(bool granularity, bool operand_size, bool long_mode_code)
 {
+    if(long_mode_code && operand_size)
+    {
+        kprintf("tried to define a segment granularity byte that has both long mode and 32 bit mode flags\n");
+        while(1);
+    }
     uint8_t granularity_byte = 0;
     granularity_byte |= (uint8_t)granularity << GRANULARITY_BIT_LOCATION;
     granularity_byte |= (uint8_t)operand_size << OPERAND_SIZE_BIT_LOCATION;
+    granularity_byte |= (uint8_t)long_mode_code << LONG_MODE_CODE_BIT_LOCATION;
     return granularity_byte;
 }
 
@@ -42,10 +53,10 @@ void set_gdt_entry(int index, uint32_t base, uint32_t limit, uint8_t access, uin
 void gdt_initialise()
 {
     set_gdt_entry(0, 0, 0,          0,    0);
-    set_gdt_entry(1, 0, 0x000FFFFF, generate_access_byte(true, 0, true, 10), generate_granularity_byte(true, true));
-    set_gdt_entry(2, 0, 0x000FFFFF, generate_access_byte(true, 0, true, 2), generate_granularity_byte(true, true));
-    set_gdt_entry(3, 0, 0x000FFFFF, generate_access_byte(true, 3, true, 10), generate_granularity_byte(true, true));
-    set_gdt_entry(4, 0, 0x000FFFFF, generate_access_byte(true, 3, true, 2), generate_granularity_byte(true, true));
+    set_gdt_entry(1, 0, 0x000FFFFF, generate_access_byte(true, 0, true, true, false, true, false), generate_granularity_byte(true, true, false));
+    set_gdt_entry(2, 0, 0x000FFFFF, generate_access_byte(true, 0, true, false, false, true, false), generate_granularity_byte(true, true, false));
+    set_gdt_entry(3, 0, 0x000FFFFF, generate_access_byte(true, 3, true, true, false, true, false), generate_granularity_byte(true, true, false));
+    set_gdt_entry(4, 0, 0x000FFFFF, generate_access_byte(true, 3, true, false, false, true, false), generate_granularity_byte(true, true, false));
 
     pws_gdt.base = (uint32_t) &gdts[0];
 
