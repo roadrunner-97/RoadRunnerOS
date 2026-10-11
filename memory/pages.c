@@ -12,11 +12,11 @@ void page_tables_self_test()
     run_paging_tests();
 }
 
+
 void set_active_page_directory(page_directory_entry_t* active_directory)
 {
     page_directory = active_directory;
     _enable_paging();
-    // kprintf("Memory: %#enabled paging and didn't blow up!!!!!!\n", COL_BG_INFO, COL_FG_INFO);
 }
 
 void handle_page_fault_interrupt()
@@ -96,7 +96,7 @@ void identity_map(page_directory_entry_t* directory, void* start_address, void* 
 {
     void* start_page_aligned = round_down_to_page_address(start_address);
     void* end_page_aligned = round_up_to_page_address(end_address);
-    kprintf("identity mapping from %d to %d\n", start_page_aligned, end_page_aligned);
+    // kprintf("identity mapping from %d to %d\n", start_page_aligned, end_page_aligned);
     for(void* p_page = start_page_aligned; p_page <= end_page_aligned; p_page+=4096)
     {
         map_virtual_page_to_physical_page(directory, p_page, p_page);

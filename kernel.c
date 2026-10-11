@@ -26,7 +26,7 @@ void my_epic_new_process_one()
 
 void my_epic_new_process_two()
 {
-	for(int i = 0; i < 5; i++)
+	for(int i = 5; i >= 0; i--)
 		{
 			kprintf("Hello world from task 2: %d :)\n", i);
 			spin_wait(500);
@@ -54,11 +54,10 @@ void kernel_main(void)
 
 	uint32_t aligned_kernel_end = (uint32_t)round_up_to_page_address(&_kernel_end);
 	kmemory_space_assign((void*)aligned_kernel_end, 0x100000);
-	multiprocessing_init(); /* we want to do this pretty quick to allow other stuff to spin up processes */
-
 	page_directory_entry_t* system_directory = create_page_directory();
 
 	identity_map(system_directory, 0,(void*)0x200000);
+	multiprocessing_init(); /* we want to do this pretty quick to allow other stuff to spin up processes */
 
 	// /* enable MMU here */
 	initialise_pagefault_handler();
@@ -68,7 +67,8 @@ void kernel_main(void)
 
 	initialise_keyboard();
 	kenable_interrupts(); /* this is what starts the preemption thingy and ultimately gives us processes*/
-	// parse_multiboot_header();
+
+	terminal_clear(); /* clear out the terminal if we initialised successfully so the user processes get the full screen */
 
 	create_process("task 1", &my_epic_new_process_one);
 	create_process("task 2", &my_epic_new_process_two);

@@ -71,10 +71,10 @@ int create_process(char* process_name, void* process_start)
     identity_map(new_process->page_directory, 0, (void*)0x200000);
     
     void* stack_page = kmemory_assign_page_aligned_chunk(STACK_SIZE);
-    kprintf("got a page at %x\n", stack_page);
+    // kprintf("got a page at %x\n", stack_page);
     map_virtual_page_to_physical_page(new_process->page_directory, (void*)round_down_to_page_address((void*)STACK_BASE), stack_page);
     new_process->stack_base = (void*)STACK_BASE;
-    kprintf("mapped physical %x to virtual %x\n", stack_page, new_process->stack_base);
+    // kprintf("mapped physical %x to virtual %x\n", stack_page, new_process->stack_base);
     
     *stack_get_element_u32(stack_page + STACK_SIZE -1, 0) = (uint32_t)catch_exiting_task;
     new_process->eip = (uint32_t)process_start;

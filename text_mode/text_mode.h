@@ -45,6 +45,7 @@ typedef enum {
 
 size_t strlen(const char* str);
 void terminal_initialize(void);
+void terminal_clear(void);
 void terminal_draw_char(char c, color_t fg, color_t bg, size_t x, size_t y);
 void terminal_putchar(char c, color_t fg, color_t bg);
 void terminal_info_putchar(char c, color_t fg, color_t bg, int info_column, int info_row);

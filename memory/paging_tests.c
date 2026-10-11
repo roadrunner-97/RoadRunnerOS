@@ -42,5 +42,6 @@ void test_virtual_page_clash()
 
 void run_paging_tests()
 {
-    test_virtual_page_clash();    
+    test_virtual_page_clash();
+    kprintf("successfully ran paging tests!\n");
 }

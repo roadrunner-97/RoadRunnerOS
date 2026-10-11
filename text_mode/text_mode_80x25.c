@@ -60,6 +60,20 @@ void terminal_initialize(void)
 	}
 }
 
+void terminal_clear()
+{
+	terminal_row = 2;
+	terminal_column = 0;
+
+	for (size_t y = 2; y < VGA_HEIGHT; y++) {
+		for (size_t x = 0; x < VGA_WIDTH; x++) {
+			buffer[INDEX(x,y)].bg = bg_default;
+			buffer[INDEX(x,y)].fg = fg_default;
+			buffer[INDEX(x,y)].glyph = ' ';
+		}
+	}
+}
+
 void newline_handle()
 {
 	terminal_column = 0;
