@@ -1,2 +1,4 @@
 Completion:
     ArgumentLists: None
+InlayHints:
+    ParameterNames: false

@@ -69,17 +69,22 @@ int create_process(char* process_name, void* process_start)
 
     new_process->page_directory = create_page_directory();
     identity_map(new_process->page_directory, 0, (void*)0x200000, false);
-    
-    void* stack_page = kmemory_assign_page_aligned_chunk(STACK_SIZE);
-    // kprintf("got a page at %x\n", stack_page);
-    map_virtual_page_to_physical_page(new_process->page_directory, (void*)round_down_to_page_address((void*)STACK_BASE), stack_page, true);
-    new_process->stack_base = (void*)STACK_BASE;
-    // kprintf("mapped physical %x to virtual %x\n", stack_page, new_process->stack_base);
-    
-    *stack_get_element_u32(stack_page + STACK_SIZE -1, 0) = (uint32_t)catch_exiting_task;
+
+    /* this page is for the stack given to the ring 3 process */
+    void* user_stack_physical_page = kmemory_assign_page_aligned_chunk(USER_STACK_SIZE);
+    map_virtual_page_to_physical_page(new_process->page_directory,
+        (void*)USER_STACK_PAGE, user_stack_physical_page, true);
+    new_process->user_stack_root = (void*)USER_STACK_ROOT;
+
+    void* kernel_stack_page = kmemory_assign_page_aligned_chunk(KERNEL_STACK_SIZE);
+    map_virtual_page_to_physical_page(new_process->page_directory,
+        (void*)KERNEL_STACK_PAGE, kernel_stack_page, false);
+    new_process->kernel_stack_root = (void*)KERNEL_STACK_ROOT;
+
+    *stack_get_element_u32(user_stack_physical_page + USER_STACK_SIZE - sizeof(uint32_t), 0) = (uint32_t)catch_exiting_task;
     new_process->eip = (uint32_t)process_start;
-    new_process->esp = (uint32_t) stack_get_element_u32(new_process->stack_base, 0);
-    new_process->ebp = (uint32_t) stack_get_element_u32(new_process->stack_base, 0);
+    new_process->esp = (uint32_t) stack_get_element_u32(new_process->user_stack_root, 0);
+    new_process->ebp = (uint32_t) stack_get_element_u32(new_process->user_stack_root, 0);
     new_process->state = PRE_START;
 
     linked_list_append(&process_list, new_process);

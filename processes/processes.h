@@ -2,8 +2,16 @@
 #include "pages.h"
 #include "stdint.h"
 
-#define STACK_SIZE 4096
-#define STACK_BASE 0xFFFFFFFF /* this is the highest *byte* address of the stack, but it needs to be rounded down to 0xFFFFFFFC for 32 bit numbers*/
+#define USER_STACK_SIZE 4096
+/* this needs to be rounded down to 0xFFFFFFFC for 32 bit numbers*/
+#define USER_STACK_ROOT 0xFFFFFFFC
+#define USER_STACK_PAGE 0xFFFFF000
+
+/* at some point i will derive the page(s) from the root and size :) */
+#define KERNEL_STACK_SIZE 4096
+#define KERNEL_STACK_ROOT 0xFFFFDFFC
+#define KERNEL_STACK_PAGE 0xFFFFD000
+
 typedef enum
 {
     PRE_START,
@@ -15,7 +23,8 @@ typedef enum
 typedef struct{
     char* process_name;
     uint32_t pid;
-    void* stack_base;
+    void* user_stack_root;
+    void* kernel_stack_root;
     uint32_t ebp, esp, eip;
     proc_lifecycle_t state;
     page_directory_entry_t* page_directory;
